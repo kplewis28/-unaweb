@@ -601,6 +601,11 @@ img { max-width: 100%; display: block; }
   font-family: var(--sans); font-size: 10px; letter-spacing: .32em;
   text-transform: uppercase; color: var(--olive); opacity: .65;
 }
+.footer-admin-link {
+  color: var(--olive); opacity: .25; font-size: 14px; line-height: 1;
+  text-decoration: none; transition: opacity .3s;
+}
+.footer-admin-link:hover { opacity: .7; }
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 880px) {
