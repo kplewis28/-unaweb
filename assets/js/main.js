@@ -185,6 +185,15 @@
     });
   }
 
+  /* -------- NAV SCROLL STATE -------- */
+  (function(){
+    var nav = document.querySelector('.topnav');
+    if(!nav) return;
+    function update(){ nav.classList.toggle('scrolled', window.scrollY > 60); }
+    window.addEventListener('scroll', update, {passive:true});
+    update();
+  })();
+
   /* -------- HERO SOUND TOGGLE -------- */
   (function(){
     var btn     = document.getElementById('hero-sound');
@@ -199,19 +208,6 @@
       iconOn.style.display  = vid.muted ? 'none'  : 'block';
       if(label) label.textContent = vid.muted ? 'Sound' : 'Mute';
     });
-  })();
-
-  /* -------- HERO LOGO FADE ON VIDEO -------- */
-  (function(){
-    var logo = document.querySelector('.hero-logo');
-    if(!logo) return;
-    setTimeout(function(){
-      logo.style.animation  = 'none';
-      logo.style.opacity    = '1';
-      logo.offsetHeight;
-      logo.style.transition = 'opacity 1.8s cubic-bezier(.2,.7,.2,1)';
-      logo.style.opacity    = '0';
-    }, 2200);
   })();
 
   /* -------- REGISTRATION MODAL -------- */
