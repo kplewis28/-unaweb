@@ -184,4 +184,79 @@
       success.classList.add("show");
     });
   }
+
+  /* -------- HERO SOUND TOGGLE -------- */
+  (function(){
+    var btn     = document.getElementById('hero-sound');
+    var vid     = document.querySelector('.hero-vid');
+    if(!btn || !vid) return;
+    var iconOff = btn.querySelector('.icon-sound-off');
+    var iconOn  = btn.querySelector('.icon-sound-on');
+    var label   = btn.querySelector('.hero-sound-label');
+    btn.addEventListener('click', function(){
+      vid.muted = !vid.muted;
+      iconOff.style.display = vid.muted ? 'block' : 'none';
+      iconOn.style.display  = vid.muted ? 'none'  : 'block';
+      if(label) label.textContent = vid.muted ? 'Sound' : 'Mute';
+    });
+  })();
+
+  /* -------- HERO LOGO FADE ON VIDEO -------- */
+  (function(){
+    var logo = document.querySelector('.hero-logo');
+    if(!logo) return;
+    setTimeout(function(){
+      logo.style.animation  = 'none';
+      logo.style.opacity    = '1';
+      logo.offsetHeight;
+      logo.style.transition = 'opacity 1.8s cubic-bezier(.2,.7,.2,1)';
+      logo.style.opacity    = '0';
+    }, 2200);
+  })();
+
+  /* -------- REGISTRATION MODAL -------- */
+  (function(){
+    var modal=document.getElementById("reg-modal");
+    var openBtn=document.getElementById("open-register");
+    var closeBtn=document.getElementById("reg-close");
+    var backdrop=document.getElementById("reg-backdrop");
+    var regForm=document.getElementById("reg-form");
+    var regSuccess=document.getElementById("reg-success");
+    if(!modal||!openBtn) return;
+
+    function openModal(){
+      modal.classList.add("open");
+      modal.removeAttribute("aria-hidden");
+      document.body.style.overflow="hidden";
+      setTimeout(function(){ if(closeBtn) closeBtn.focus(); }, 120);
+    }
+    function closeModal(){
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+      openBtn.focus();
+    }
+
+    openBtn.addEventListener("click", openModal);
+    if(closeBtn) closeBtn.addEventListener("click", closeModal);
+    if(backdrop) backdrop.addEventListener("click", closeModal);
+    document.addEventListener("keydown", function(e){
+      if(e.key==="Escape" && modal.classList.contains("open")) closeModal();
+    });
+
+    if(regForm){
+      regForm.addEventListener("submit", function(e){
+        e.preventDefault();
+        var name=regForm.querySelector('[name="name"]').value.trim();
+        var email=regForm.querySelector('[name="email"]').value.trim();
+        if(!name||!email){
+          if(!name) regForm.querySelector('[name="name"]').focus();
+          else regForm.querySelector('[name="email"]').focus();
+          return;
+        }
+        regForm.style.display="none";
+        if(regSuccess) regSuccess.classList.add("show");
+      });
+    }
+  })();
 })();

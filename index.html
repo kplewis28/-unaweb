@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>ÚNA · A Thread Between Worlds</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css?v=2" />
 </head>
 <body>
 
@@ -37,8 +37,34 @@
       <div class="hero-stage">
         <img class="hero-logo" src="assets/images/una-logo-wide.png" alt="ÚNA" />
         <div class="hero-photo">
-          <img src="assets/images/maloca.jpg" alt="A traditional thatched-roof Maloca in the Sierra Nevada de Santa Marta" />
+          <video class="hero-vid" autoplay muted loop playsinline>
+            <source src="assets/images/una-final.mp4" type="video/mp4" />
+          </video>
         </div>
+      </div>
+      <div class="hero-sound-wrap">
+        <button class="hero-sound" id="hero-sound" type="button">
+          <svg class="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+          <svg class="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" style="display:none">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <span class="hero-sound-label">Sound</span>
+        </button>
+      </div>
+      <div class="hero-cta">
+        <span class="eyebrow">Next Gathering · September 2026</span>
+        <button class="hero-register-btn" id="open-register" type="button">
+          <span>Apply to attend</span>
+          <svg viewBox="0 0 30 10" aria-hidden="true">
+            <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -343,6 +369,61 @@
   </div>
 </footer>
 
-<script src="assets/js/main.js"></script>
+<!-- ===== REGISTRATION MODAL ===== -->
+<div class="reg-modal" id="reg-modal" aria-hidden="true">
+  <div class="reg-backdrop" id="reg-backdrop"></div>
+  <div class="reg-panel" role="dialog" aria-modal="true" aria-labelledby="reg-title">
+    <button class="reg-close" id="reg-close" aria-label="Close">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <div class="reg-inner">
+      <span class="eyebrow">Next Gathering · September 2026</span>
+      <h2 class="reg-title" id="reg-title">Apply to <em>attend</em></h2>
+      <p class="reg-desc">We review each application with care. If your profile aligns with the circle, we will reach out with next steps.</p>
+      <form class="contact-form" id="reg-form" novalidate>
+        <div class="form-row">
+          <label><span class="label">Full name</span><input type="text" name="name" required /></label>
+          <label><span class="label">Email</span><input type="email" name="email" required /></label>
+        </div>
+        <div class="form-row">
+          <label><span class="label">Country of residence</span><input type="text" name="country" required /></label>
+          <label><span class="label">Profession</span><input type="text" name="profession" /></label>
+        </div>
+        <label>
+          <span class="label">Why do you feel called to attend?</span>
+          <textarea name="motivation" rows="5" placeholder="Share what draws you to this gathering and a little about who you are."></textarea>
+        </label>
+        <label>
+          <span class="label">How did you hear about ÚNA?</span>
+          <select name="source">
+            <option value="">Select one</option>
+            <option>Instagram</option>
+            <option>Word of mouth</option>
+            <option>LinkedIn</option>
+            <option>A past participant</option>
+            <option>Press or media</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>
+          <span class="label">Social media or LinkedIn (optional)</span>
+          <input type="text" name="social" placeholder="https://" />
+        </label>
+        <button type="submit" class="contact-submit">
+          <span>Submit application</span>
+          <svg viewBox="0 0 30 10" aria-hidden="true">
+            <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </form>
+      <div class="form-success" id="reg-success">
+        Your application has been received. We will review it with care and be in touch.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js?v=6"></script>
 </body>
 </html>
