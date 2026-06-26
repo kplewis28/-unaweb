@@ -602,10 +602,11 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase; color: var(--olive); opacity: .65;
 }
 .footer-admin-link {
-  color: var(--olive); opacity: .25; font-size: 14px; line-height: 1;
-  text-decoration: none; transition: opacity .3s;
+  color: rgba(239,236,223,.55);
+  font-family: var(--sans); font-size: 10px; letter-spacing: .32em; text-transform: uppercase;
+  text-decoration: none; transition: color .3s;
 }
-.footer-admin-link:hover { opacity: .7; }
+.footer-admin-link:hover { color: rgba(239,236,223,.9); }
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 880px) {
