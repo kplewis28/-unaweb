@@ -4,8 +4,8 @@ import { createSessionToken, SESSION_COOKIE } from "@/lib/session";
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
-  const adminEmail = process.env.ADMIN_EMAIL;
-  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminEmail = process.env.ADMIN_EMAIL?.trim();
+  const adminPassword = process.env.ADMIN_PASSWORD?.trim();
 
   if (!adminEmail || !adminPassword) {
     return NextResponse.json(
