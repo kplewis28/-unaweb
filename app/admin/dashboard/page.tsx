@@ -2,7 +2,7 @@ import type { Application } from "@/lib/supabase/types";
 import DashboardClient from "./DashboardClient";
 import { MOCK_APPLICATIONS } from "@/lib/mock-data";
 
-const IS_MOCK = process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
+const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
 export default async function DashboardPage() {
   let applications: Application[] = [];

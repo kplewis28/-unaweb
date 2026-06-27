@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import ApplicationForm from "./ApplicationForm";
 import { MOCK_RETREAT } from "@/lib/mock-data";
 
-const IS_MOCK = process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
+const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
 interface Props {
   params: Promise<{ slug: string }>;
