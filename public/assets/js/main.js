@@ -244,8 +244,17 @@
     });
 
     if(regForm){
+      var regError=document.getElementById("reg-error");
+      function showRegError(msg){
+        if(regError){ regError.textContent=msg; regError.style.display="block"; }
+      }
+      function clearRegError(){
+        if(regError){ regError.textContent=""; regError.style.display="none"; }
+      }
+
       regForm.addEventListener("submit", function(e){
         e.preventDefault();
+        clearRegError();
         var name=regForm.querySelector('[name="name"]').value.trim();
         var email=regForm.querySelector('[name="email"]').value.trim();
         if(!name||!email){
@@ -254,9 +263,9 @@
           return;
         }
         var submitBtn=regForm.querySelector('[type="submit"]');
-        var submitSpan=submitBtn.querySelector("span");
-        submitBtn.disabled=true;
-        submitSpan.textContent="Sending…";
+        var submitSpan=submitBtn ? submitBtn.querySelector("span") : null;
+        if(submitBtn) submitBtn.disabled=true;
+        if(submitSpan) submitSpan.textContent="Sending…";
 
         fetch("/api/applications",{
           method:"POST",
@@ -278,15 +287,15 @@
             regForm.style.display="none";
             if(regSuccess) regSuccess.classList.add("show");
           } else {
-            submitBtn.disabled=false;
-            submitSpan.textContent="Submit application";
-            alert(data.error||"Something went wrong. Please try again.");
+            if(submitBtn) submitBtn.disabled=false;
+            if(submitSpan) submitSpan.textContent="Submit application";
+            showRegError(data.error||"Something went wrong. Please try again.");
           }
         })
         .catch(function(){
-          submitBtn.disabled=false;
-          submitSpan.textContent="Submit application";
-          alert("Could not connect. Please try again.");
+          if(submitBtn) submitBtn.disabled=false;
+          if(submitSpan) submitSpan.textContent="Submit application";
+          showRegError("Could not connect. Please try again.");
         });
       });
     }
