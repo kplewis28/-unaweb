@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const IS_MOCK =
   process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   // Skip auth in mock/frontend mode
   if (IS_MOCK) return NextResponse.next({ request });
 

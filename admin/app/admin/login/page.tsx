@@ -16,20 +16,25 @@ export default function AdminLoginPage() {
     setError(null);
     setLoading(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      setError("Credenciales incorrectas. Verifica tu correo y contraseña.");
+      if (error) {
+        setError("Credenciales incorrectas. Verifica tu correo y contraseña.");
+        return;
+      }
+
+      router.push("/admin/dashboard");
+      router.refresh();
+    } catch {
+      setError("No se pudo conectar. Intenta de nuevo.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    router.push("/admin/dashboard");
-    router.refresh();
   }
 
   return (
