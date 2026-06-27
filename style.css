@@ -1,0 +1,377 @@
+/*
+  ÚNA static web prototype
+  Add your licensed font files inside assets/fonts/ with these exact names if you want pixel-level fidelity:
+  CrimsonText-Regular.ttf
+  HelveticaNeueLight.otf
+  HelveticaNeueMedium.otf
+  HelveticaNeueBold.otf
+  LorneVariable.ttf
+
+  Font files are intentionally not included in this package.
+*/
+
+@font-face {
+  font-family: "Crimson Text Local";
+  src: url("../fonts/CrimsonText-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue Local";
+  src: url("../fonts/HelveticaNeueLight.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue Local";
+  src: url("../fonts/HelveticaNeueMedium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Helvetica Neue Local";
+  src: url("../fonts/HelveticaNeueBold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Lorne Local";
+  src: url("../fonts/LorneVariable.ttf") format("truetype");
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --cream: #efecdf;
+  --olive: #473e0f;
+  --sage: #abaa70;
+  --ink: #060606;
+  --soft-olive: rgba(171, 170, 112, .68);
+  --serif: "Crimson Text Local", "Crimson Text", Georgia, serif;
+  --sans: "Helvetica Neue Local", "Helvetica Neue", Arial, sans-serif;
+  --lorne: "Lorne Local", "Helvetica Neue", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--cream);
+  font-family: var(--serif);
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+.site-nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 30px 44px;
+  font: 700 9px/1 var(--sans);
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: var(--cream);
+  mix-blend-mode: normal;
+}
+.site-nav a:nth-child(2) { text-align: center; }
+.site-nav a:nth-child(3) { text-align: right; }
+
+.panel { width: min(100%, 1440px); margin: 0 auto; overflow: hidden; }
+.olive { background: var(--olive); color: var(--cream); }
+.cream { background: var(--cream); color: var(--ink); }
+
+.home-hero {
+  min-height: 1040px;
+  padding-top: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero-mark {
+  position: relative;
+  width: 100%;
+  height: clamp(340px, 42vw, 560px);
+  margin-top: 55px;
+}
+.hero-photo {
+  position: absolute;
+  z-index: 1;
+  width: min(55vw, 720px);
+  height: min(23vw, 300px);
+  object-fit: cover;
+  left: 50%;
+  top: 23%;
+  transform: translateX(-50%);
+  filter: grayscale(1);
+}
+.hero-logo {
+  position: absolute;
+  z-index: 2;
+  width: 136%;
+  max-width: none;
+  left: 50%;
+  top: 4%;
+  transform: translateX(-50%);
+}
+
+.hero-copy {
+  width: 100%;
+  text-align: center;
+  margin-top: 24px;
+  padding: 0 36px 88px;
+}
+.eyebrow,
+.label {
+  font-family: var(--sans);
+  text-transform: uppercase;
+  letter-spacing: .36em;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.eyebrow { font-size: 14px; }
+.label { font-size: 10px; margin: 0 0 18px; }
+.muted { color: var(--soft-olive); }
+.mini-symbol {
+  width: 34px;
+  height: 34px;
+  margin: 30px auto;
+  color: var(--sage);
+  opacity: .72;
+}
+.manifesto {
+  font-size: clamp(24px, 2.12vw, 34px);
+  line-height: .92;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.about { padding: 76px 70px 150px; }
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 34px;
+  row-gap: 125px;
+}
+.text-block h2,
+.image-statement h2 {
+  margin: 0 0 26px;
+  font-family: var(--sans);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -.06em;
+  line-height: .84;
+}
+.text-block h2 { font-size: 40px; }
+.text-block p {
+  margin: 0;
+  font-size: 23px;
+  line-height: .94;
+}
+.intro-block { grid-column: 1 / span 7; }
+.two-col-text {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 66px;
+}
+.small-circle { grid-column: 1 / span 3; }
+.image-statement {
+  grid-column: 8 / span 4;
+  align-self: start;
+  margin-top: 8px;
+}
+.image-statement h2 {
+  font-size: 41px;
+  margin-bottom: 0;
+  position: relative;
+  z-index: 2;
+}
+.image-statement img {
+  width: 250px;
+  height: 278px;
+  object-fit: cover;
+  margin-top: -4px;
+  margin-left: 6px;
+  filter: grayscale(1);
+}
+.roots { grid-column: 5 / span 3; margin-top: -30px; }
+
+.cycle {
+  position: relative;
+  min-height: 1080px;
+  padding: 84px 8vw 96px;
+}
+.cycle::before {
+  content: "";
+  position: absolute;
+  width: 880px;
+  height: 880px;
+  border: 1px solid rgba(171,170,112,.14);
+  border-radius: 50%;
+  right: -320px;
+  top: -30px;
+}
+.cycle::after {
+  content: "";
+  position: absolute;
+  width: 780px;
+  height: 780px;
+  border: 1px solid rgba(171,170,112,.1);
+  border-radius: 50%;
+  right: -215px;
+  top: 320px;
+}
+.cycle-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 660px;
+  margin: 0 auto 86px;
+}
+.cycle-header h2 {
+  margin: 0;
+  font-family: var(--sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: clamp(64px, 6.1vw, 110px);
+  letter-spacing: -.055em;
+  line-height: .93;
+}
+.cycle-header p:last-child {
+  color: var(--soft-olive);
+  font-size: 25px;
+  line-height: 1.28;
+  margin: 38px auto 0;
+}
+.cycle-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 430px 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 70px 70px;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.cycle-diagram {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+}
+.cycle-diagram svg {
+  width: 100%;
+  fill: none;
+  stroke: var(--sage);
+  stroke-width: 1.4;
+  opacity: .9;
+}
+.cycle-item { color: var(--soft-olive); max-width: 340px; }
+.cycle-item span {
+  font-family: var(--sans);
+  font-size: 14px;
+  letter-spacing: .35em;
+  display: block;
+  margin-bottom: 16px;
+}
+.cycle-item h3 {
+  font-family: var(--sans);
+  font-size: 29px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.06em;
+  line-height: .82;
+  color: var(--cream);
+  margin: 0 0 30px;
+}
+.cycle-item h3::after {
+  content: "";
+  display: block;
+  width: 58px;
+  height: 1px;
+  margin-top: 27px;
+  background: var(--sage);
+  opacity: .65;
+}
+.cycle-item p {
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0;
+}
+.item-1 { justify-self: end; text-align: right; }
+.item-1 h3::after, .item-4 h3::after { margin-left: auto; }
+.item-4 { justify-self: end; align-self: end; text-align: right; }
+.item-3 { align-self: end; }
+
+.contact {
+  min-height: 720px;
+  display: grid;
+  place-items: center;
+  padding: 110px 30px;
+  text-align: center;
+}
+.contact-inner { max-width: 840px; }
+.contact h2 {
+  font-family: var(--sans);
+  font-size: clamp(48px, 7vw, 110px);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.075em;
+  line-height: .86;
+  margin: 0 0 35px;
+}
+.contact p:not(.label) {
+  font-size: 27px;
+  line-height: 1.05;
+  max-width: 620px;
+  margin: 0 auto 42px;
+}
+.button {
+  display: inline-block;
+  border: 1px solid currentColor;
+  padding: 17px 24px 15px;
+  font: 700 11px/1 var(--sans);
+  text-transform: uppercase;
+  letter-spacing: .32em;
+}
+
+@media (max-width: 900px) {
+  .site-nav { padding: 24px 20px; font-size: 8px; }
+  .home-hero { min-height: auto; padding-top: 80px; }
+  .hero-mark { height: 280px; margin-top: 34px; }
+  .hero-photo { width: 70vw; height: 170px; top: 26%; }
+  .hero-logo { width: 170%; top: 12%; }
+  .manifesto { font-size: 24px; line-height: .96; }
+  .about { padding: 56px 32px 96px; }
+  .about-grid,
+  .two-col-text,
+  .cycle-layout {
+    display: block;
+  }
+  .text-block,
+  .image-statement { margin: 0 0 78px; }
+  .roots { margin-top: 0; }
+  .text-block h2,
+  .image-statement h2 { font-size: 34px; }
+  .text-block p { font-size: 22px; }
+  .image-statement img { width: 220px; height: 260px; }
+  .cycle { min-height: auto; padding: 78px 32px 86px; }
+  .cycle-header { margin-bottom: 58px; }
+  .cycle-header p:last-child { font-size: 21px; }
+  .cycle-diagram { margin: 40px auto; max-width: 360px; }
+  .cycle-item { max-width: none; margin: 50px 0; text-align: left; }
+  .item-1, .item-4 { text-align: left; }
+  .item-1 h3::after, .item-4 h3::after { margin-left: 0; }
+}

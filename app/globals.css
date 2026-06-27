@@ -1,0 +1,190 @@
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap");
+@import "tailwindcss";
+
+:root {
+  --cream: #efecdf;
+  --cream-warm: #faf8f4;
+  --olive: #473e0f;
+  --olive-light: #5c5118;
+  --sage: #abaa70;
+  --sage-muted: rgba(171, 170, 112, 0.45);
+  --ink: #060606;
+  --ink-soft: #2a2a2a;
+  --error: #8b3a2a;
+  --success: #3a6b3a;
+}
+
+@theme inline {
+  --color-cream: var(--cream);
+  --color-cream-warm: var(--cream-warm);
+  --color-olive: var(--olive);
+  --color-olive-light: var(--olive-light);
+  --color-sage: var(--sage);
+  --color-sage-muted: var(--sage-muted);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-error: var(--error);
+  --color-success: var(--success);
+  --font-serif: "Crimson Text", Georgia, serif;
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background: var(--cream-warm);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Base input/textarea/select styles */
+.una-input {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--sage);
+  padding: 10px 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+
+.una-input:focus {
+  border-bottom-color: var(--olive);
+}
+
+.una-input::placeholder {
+  color: var(--sage);
+  opacity: 0.7;
+}
+
+.una-input-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 6px;
+}
+
+/* Primary button */
+.una-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--olive);
+  color: var(--cream);
+  border: none;
+  padding: 14px 32px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  border-radius: 0;
+}
+
+.una-btn:hover {
+  background: var(--olive-light);
+}
+
+.una-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ghost button */
+.una-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--olive);
+  border: 1px solid var(--sage);
+  padding: 9px 20px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  border-radius: 0;
+}
+
+.una-btn-ghost:hover {
+  border-color: var(--olive);
+}
+
+/* Danger ghost */
+.una-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--error);
+  border: 1px solid rgba(139, 58, 42, 0.35);
+  padding: 9px 20px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  border-radius: 0;
+}
+
+.una-btn-danger:hover {
+  border-color: var(--error);
+}
+
+/* Status badges */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+.badge-pending {
+  background: rgba(171, 170, 112, 0.18);
+  color: #6b6730;
+  border: 1px solid rgba(171, 170, 112, 0.4);
+}
+
+.badge-approved {
+  background: rgba(58, 107, 58, 0.1);
+  color: var(--success);
+  border: 1px solid rgba(58, 107, 58, 0.3);
+}
+
+.badge-rejected {
+  background: rgba(139, 58, 42, 0.08);
+  color: var(--error);
+  border: 1px solid rgba(139, 58, 42, 0.25);
+}
+
+/* Divider */
+.una-divider {
+  border: none;
+  border-top: 1px solid var(--sage-muted);
+  margin: 0;
+}

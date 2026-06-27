@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ÚNA · A Thread Between Worlds</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="assets/css/style.css?v=2" />
+</head>
+<body>
+
+<div class="grain"></div>
+
+<nav class="topnav">
+  <a class="brand" data-tab="home" href="#home" aria-label="Home">
+    <img class="nav-logo" src="assets/images/una-logo-wide.png" alt="ÚNA" />
+  </a>
+  <span></span>
+  <button class="nav-toggle" aria-label="Menu" aria-expanded="false" type="button">
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
+  <div class="links" id="nav-links">
+    <a data-tab="home" href="#home" class="active">Home</a>
+    <a data-tab="about" href="#about">About</a>
+    <a data-tab="gatherings" href="#gatherings">Gatherings</a>
+    <a data-tab="contact" href="#contact">Contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ===== HOME TAB ===== -->
+  <div class="tab active" data-tab-content="home">
+
+    <section class="hero">
+      <video class="hero-vid" autoplay muted loop playsinline>
+        <source src="assets/images/una-final.mp4" type="video/mp4" />
+      </video>
+      <div class="hero-sound-wrap">
+        <button class="hero-sound" id="hero-sound" type="button">
+          <svg class="icon-sound-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+          <svg class="icon-sound-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" style="display:none">
+            <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <span class="hero-sound-label">Sound</span>
+        </button>
+      </div>
+      <div class="hero-cta">
+        <span class="eyebrow">Next Gathering · September 2026</span>
+        <button class="hero-register-btn" id="open-register" type="button">
+          <span>Apply to attend</span>
+          <svg viewBox="0 0 30 10" aria-hidden="true">
+            <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <section class="mission">
+      <span class="eyebrow">A Thread Between Worlds</span>
+      <svg class="una-symbol size-md glyph" viewBox="0 0 150.76 214.24" aria-hidden="true">
+        <path d="M65.8.17c6.56,1.77,13.23,1.22,19.78-.17,5.61.5,12.52,1.3,17.78,4.11,9.1,3.98,15.91,11.36,22.26,18.79,11.77,13.8,20.26,29.83,23.75,47.75,1.7,9.06,2.38,19.13-1.3,27.83-.9,2.88-2.39,5.06-3.25,7.73-.57,1.54.53,3.63,1.39,5.07,2.33,4.38,3.3,9.52,4.23,14.25.83,6.2-.39,12.42-1.53,18.38-.1,5.75-2.18,11.09-4.09,15.21-2.13,5.02-3.88,9.57-6.53,14.52-3.95,6.06-7.32,12.15-12.59,17.11-6.9,9.08-16.52,17.48-27.71,21.13-3.25,1.22-6.49,2.09-9.99,2.3-4.84.39-8.83-1.38-13.13-1.58-3.12-.05-5.93,1.35-9.33,1.49-6.96-.02-13.74-2.09-20.01-5.03-5.88-3.11-11.29-7.56-16.42-12.48-5.24-6.33-10.1-13.21-14.89-20.01-5.16-7.76-8.26-16.54-11.27-25.42C.24,143.24.02,135.01.69,126.66c.13-2.3-.5-4.28-.21-6.33,1.13-3.2,2.53-6.36,3.9-9.55,3.06-4.41-.75-8.53-2.3-12.65-2.39-8.47-2.76-18.03-.94-26.59,1.07-5.58,1.89-11.91,4.93-17.13,2.49-8.51,7.21-16.44,12.5-23.29C28.64,14.74,45.42-.11,65.43.11l.37.06ZM60.43,4.87c-8.76,1.66-17.23,5.35-22.9,12.62-3.71,4.36-7.05,7.73-10.04,12.48-1.9,4.06-4.81,6.47-5.98,10.71-3.37,6.75-7.41,13.75-9.44,21.12-2.94,10.87-6.42,21.75-4.92,33.24.11,2.07,1.63,8.48,4.34,6.95,1.62-1.05,3.89-2.84,5.76-3.57,4.74-2.77,10.23-4.79,15.65-5.53,2.32-.64,5.4-1.28,7.97-.82,3.12.57,5.3,1.25,8.58,1.72,5.7,1.28,10.38,4.25,15.38,7.34,2.17,1.59,6.47.36,5.19-2.82-2.42-3.97-4.86-7.53-6.97-11.85-1.32-2.82-3.57-5-4.83-7.83-1.16-3.79-2.43-6.97-4.03-10.61-1.87-4.11-3.73-8.5-4.22-12.95-.88-2.52-2.28-5.26-2.3-7.86-.48-3.37-.48-6.91.07-10.14.33-3.59.38-8.06,1.89-11.46,1.11-4.73,4.7-9.51,7.3-12.93,2-3.35,5.54-5.27,8.8-7.28,1.48-1.44-4.48-.69-4.98-.61l-.32.06ZM90.19,4.91c-1.17-.22-4.91-.59-5.27.44.54.8,1.83,1.59,3.01,2.53,2.4,2.03,4.32,3.66,6.34,5.92,3.95,4.54,5.98,9.91,7.74,15.52,3.11,10.65-.07,23.04-3.76,33.35-1.83,6.19-5.1,11.99-7.11,18.17-1.26,3.49-4.36,6.06-6.15,9.21-1.41,3.25-6.39,8.33-3.12,11.72.79.65,1.81.46,2.87-.1,1.99-1.38,4.38-2.65,6.37-3.91,5.82-2.79,12.29-4.48,18.62-5.71,3.37.28,7.42.54,10.73,1.31,6.27,1.14,12.99,4.87,18.37,8.58,6.1,3.3,4.77-18.57,4.35-21.68-.98-7.27-3.94-12.4-5.18-19.6-.76-2.59-1.09-5.17-2.49-7.24-1.49-1.96-2.41-4.95-3.73-7.13-2.11-2.98-3.38-6.64-4.94-10.01-6.74-9.45-12.56-19.84-22.85-26.17-3.8-2.01-9.3-4.03-13.46-5.13l-.35-.06ZM77.67,7.24c-4.29-1.63-8.65,1.94-11.84,4.17-1.88,1.24-2.81,2.37-3.91,4.17-1.83,3.41-4.32,5.4-5.79,8.81-.99,3.55-2.53,6.15-2.42,10.21-.63,5.64-.42,11.54,1.88,16.96.67,3.49.8,6.96,2.92,9.72,1.44,2.36,2.03,5.22,2.57,7.82,1.62,4.36,4.35,8.5,6.43,12.88,1.59,2.26,3.13,4.12,4.47,7.14.61,1.25,1.65,3.31,3.02,3.37.71.06,1.6-.47,2.37-1.31,1.92-2.65,3.43-5.22,5.1-8.01.6-1.32.45-2.58,1.3-3.74.51-.8,1.29-1.46,1.68-2.54.61-3.5,3.76-4.95,4.36-8.76.22-1.26.44-2.64,1.11-3.72,2.54-3.93,2.73-10.15,4.85-14.24.46-1.11.44-1.92.45-2.75-.08-1.79,1.15-4.73,1.28-6.8.04-1.18-.81-1.84-1.08-2.9-.55-2.77.81-4.47-.16-7.48-.93-2.01-1.69-4.24-2.42-6.44-1.45-4.2-4.08-6.69-7.07-9.5-2.55-3.03-4.86-5.8-8.69-6.93l-.38-.12ZM41.27,97.94c-3.33-.42-9.43-.38-12.51-.2-2.12.29-4.11,1.6-6.06,2.39-3.27,1.53-6.54,3.34-9.13,6.15-.27.34-.39.64-.34.93.25.86,1.49,1.49,2.26,2.16,3.38,3.61,8,4.84,12.64,5.81,3.13,1.47,7.25,1.48,10.51,1.17,1.99-.43,3.05-1.45,4.97-.58,1.76.61,3.16-.84,4.94-1.51,3.82-.72,7.09-2.66,10.46-5.09.77-.57,1.83-1.39,1.75-2.4-.15-1.45-3.43-2.43-5.06-4.24-.39-.37-.87-.79-1.3-1.11-1.27-.96-2.73-.93-4.24-1.21-2.7-.51-6.5-1.71-8.59-2.2l-.29-.06ZM122.37,98.04c-2.77-.69-5.81-.34-10.31.07-8.68.8-13.59,1.79-20.37,6.52-1.07.75-3.38,2-1.69,3.22,2.44,1.79,5.06,4.07,7.93,4.89,1.72.66,3.22,1.54,5.32,1.85,2.69.21,4.22,1.32,6.84,1.78,3.8-.1,9.98.34,12.54-.28.95-.29,2.12-1.12,2.81-1.45,3.24-1.22,6.44-3.24,9.18-5.15,1.5-.78,3.35-2.38,1.77-3.96-1.47-1.72-3.94-3.06-5.75-4.03-2.46-1.53-5.25-2.68-7.94-3.37l-.34-.09ZM75.95,103.95c-.42-.12-1.27-.17-1.88-.12-.65-.08-.34,1.28-.47,1.78-.09.17-1.2.04-1.68.08-.46-.09-.25.55-.3,1.47-.03.89-.04.88.75.85.56.01,1.12-.03,1.24.04.25-.07.82,3.47,1.41,3.18.22,0,.65.01.86.02l.22-.59c-.15-1.16.54-1.67,1.18-2.22,2.18-1.73.36-3.15-1.16-4.42l-.17-.07ZM59.71,208.94c1.19.54,6.11.75,6.61-.31-1.35-1.5-4.03-2.3-5.6-4-8.73-7.7-12.92-18.66-13.6-29.96-.11-7.59,2.3-14.26,4.2-21.8,2.22-5.49,5.76-15.15,8.03-19.58,3.43-4.99,6.74-11.18,10.15-16.22,2-2.8-.36-6.39-3.77-4.9-2.45.92-4.14,2.86-6.54,3.97-1.84,1.02-4.12,1.71-6.05,2.59-4.02,1.43-7.81,3.58-13.59,3.4-9.8-.16-18.95-3.83-26.78-9.34-4.49-3.13-5.33,2.88-5.91,6.68-.92,12.1,3.32,24.76,6.11,36.37,2.62,6.07,5.88,10.36,8.45,16.89,3.94,9.33,11.44,17.19,17.45,25.16,5.49,5.75,13.53,8.14,20.51,10.95l.33.1ZM84.57,208.89c1.61.78,5.38.22,7.27-.72,3.02-1.56,7.76-2.27,11.04-4.03,3.15-1.6,5.22-3.72,8.04-6.05,6.52-6.38,11.43-13.69,16.44-21.3,2.93-6.03,5.69-11.99,8.82-17.95,1.71-3.5,2.17-9.18,3.74-13.47,2.54-6.7,2.96-13.32,3.94-20.4,0-2.37-.23-4.18-.48-6.51-.08-2.29-1.03-7.42-4.45-6.29-7.97,5.3-16.91,9.75-27.13,9.86-7.12.1-13.81-2.83-20.15-5.39-2.19-.95-3.89-2.77-6.05-4.2-1.19-.82-2.87-1.02-3.92-.04-3.04,3.58,3.17,10.4,4.87,13.65,1.83,3.64,4.06,5.96,5.51,10.24,1,2.97,2.15,5.84,3.91,8.42,1.51,2.29,1.73,5.56,2.66,8.22.93,2.3,2.11,3.52,2.63,5.89.32,3.68,1.23,8.2,1.83,12.19.19,4.38-.19,10.19-.96,13.95-1.24,4.16-3.73,9.42-6.11,13.22-2.76,3.77-6.19,7.06-10.31,9.17-.56.41-.81.48-1.25,1.07-.08.15-.08.27,0,.38l.11.1ZM75.71,121.58c-1.05-.23-2.2.78-2.82,1.73-1.69,2.53-3.16,4.6-4.4,6.68-2.29,5.12-5.89,10.18-7.16,15.71-.42,2.3-1.19,4.07-2.28,6.11-2.51,4.39-3.68,9.69-4.66,14.6-.47,2.45.89,4.74-.68,6.84-.62,1.29.65,2.65.48,3.94-.33,1.89-.81,4.21-.34,6.22.93,4.58,2.65,8.23,5.78,11.71,3.94,4.91,8.68,10.98,15.49,11.63,3.23.57,6.6-2.39,9.03-4.41,5.66-4.36,10.15-10.6,12.07-17.4.92-2.05.45-3.92.12-5.94-.27-2.73.56-5.48.29-8.18-.27-5.37-1.64-10.77-3.15-16.07-2.6-4.94-5.12-10.27-7.23-15.59-.82-1.59-1.59-3.11-2.08-4.85-1.19-2.68-2.94-5.72-4.46-8.03-.52-.76-1.12-1.52-1.61-2.3-.59-.96-1-2.02-2.11-2.33l-.28-.06Z" fill="currentColor"/>
+      </svg>
+      <p>ÚNA weaves ancestral cultures and contemporary thought into experiences and immersive spaces that give more than they take. Our work centres and collaborates with those who protect cultural and traditional ecological knowledge, and cultivates a global community working toward a thriving and balanced planet.</p>
+    </section>
+
+    <section class="home-pillars reveal">
+      <div class="pillars-inner">
+        <div class="pillars-eyebrow fade-up">
+          <span class="eyebrow">A Cultural Gathering</span>
+          <span class="eyebrow">[ Rooted In ]</span>
+        </div>
+        <h2 class="pillars-title">
+          <span class="pt-line fade-up d1 pillars-thread">A THREAD BETWEEN WORLDS</span>
+        </h2>
+      </div>
+    </section>
+
+    <section class="home-letter reveal">
+      <div class="letter-inner">
+        <div class="letter-header fade-up">
+          <span class="letter-issue">Vol I · 2026</span>
+        </div>
+        <h2 class="letter-title fade-up d1">From the Heart<br>of the World</h2>
+        <figure class="letter-image fade-up d2">
+          <img src="assets/images/exchange-photo.jpg" alt="A scene from a ÚNA gathering in the Sierra Nevada" />
+        </figure>
+        <div class="letter-text fade-up d3">
+          <p>It takes a circle to build something sacred. The Elder Sisters of the Wiwa, Arhuaco, and Kogi have tended the Heart of the World for centuries. The high mountains of the Sierra Nevada de Santa Marta, the watersheds, the women's houses where knowledge moves between generations.</p>
+          <p>ÚNA does not host an experience. We help convene a meeting between worlds. Each gathering is immersive cultural immersion, deep kinship with land, and quiet transformation. What is given returns to the territory. Gardens, infrastructure, the slow architecture of Indigenous sovereignty.</p>
+        </div>
+        <div class="letter-continued fade-up d4">
+          <a href="#about" data-tab="about">Continued in About</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== ABOUT TAB ===== -->
+  <div class="tab" data-tab-content="about">
+
+    <section class="cycle" id="cycle">
+      <div class="head">
+        <span class="eyebrow fade-up">The Cycle · Reciprocity</span>
+        <h2 class="fade-up d2">Give more<br>than we take</h2>
+        <p class="fade-up d3">Every ÚNA gathering moves through a circle, from immersion, to kinship, to transformation, and back to the land as care.</p>
+      </div>
+      <div class="stage-grid">
+        <div class="spiral-cell">
+          <svg id="cycle-svg" viewBox="0 0 560 560" aria-hidden="true"></svg>
+        </div>
+        <div class="stage stage--1 fade-up d3">
+          <span class="num">01</span>
+          <h3>Immersive<br>Experience</h3>
+          <span class="rule"></span>
+          <p>Five days on ancestral land in the Sierra Nevada de Santa Marta, hosted and led by Indigenous women knowledge keepers.</p>
+        </div>
+        <div class="stage stage--2 fade-up d4">
+          <span class="num">02</span>
+          <h3>Kinship with<br>People &amp; Land</h3>
+          <span class="rule"></span>
+          <p>Through ceremony and deep listening, a circle of fifteen is woven with territory, ancestral wisdom, and each other. We become ÚNA.</p>
+        </div>
+        <div class="stage stage--3 fade-up d5">
+          <span class="num">03</span>
+          <h3>Personal<br>Transformation</h3>
+          <span class="rule"></span>
+          <p>An encounter of worlds. To sit with discomfort, unlearn what dominant cultures taught, and know the living world differently.</p>
+        </div>
+        <div class="stage stage--4 fade-up d6">
+          <span class="num">04</span>
+          <h3>Positive<br>Impact</h3>
+          <span class="rule"></span>
+          <p>The land is left in better condition than found. Women's houses, herbal gardens, communal infrastructure toward Indigenous sovereignty.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="experience reveal">
+      <div class="exp-grid">
+        <article class="exp-block exp-cultural fade-up d1">
+          <span class="eyebrow">The Experience</span>
+          <h3>Cultural<br>Immersion</h3>
+          <div class="body">
+            <p>ÚNA opens rare access to living cultures that have tended the 'Heart of the World' for centuries in the Sierra Nevada de Santa Marta, Colombia. Each gathering unfolds over five days on ancestral land, hosted and led by Indigenous women knowledge keepers who invite a select circle into their lands and sacred sites.</p>
+            <p>Beyond a curated experience, ÚNA creates an encounter of worlds, ways of knowing, being, and stewarding. A space for those willing to sit with the discomfort, to unlearn what dominant cultures have taught, to engage cosmologically with the natural world around in ways that may change everything.</p>
+          </div>
+        </article>
+        <article class="exp-block exp-small fade-up d2">
+          <span class="eyebrow">The Experience</span>
+          <h3>Small<br>Circle</h3>
+          <div class="body">
+            <p>A maximum of 15 selected participants are invited into each gathering. Through ceremony, land-based learning, and deep listening, ÚNA weaves participants with territory, ancestral wisdom, and each other. They arrive as guests, yet leave as kin. We become ÚNA.</p>
+          </div>
+        </article>
+        <article class="exp-block exp-roots fade-up d3">
+          <span class="eyebrow">The Experience</span>
+          <h3>Roots<br>That Remain</h3>
+          <div class="body">
+            <p>Every gathering leaves something behind. A positive impact where land and place are left in a better condition than found. Women's houses, herbal and food gardens, communal infrastructure towards Indigenous sovereignty.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== GATHERINGS TAB ===== -->
+  <div class="tab" data-tab-content="gatherings">
+
+    <section class="gatherings reveal">
+      <div class="gatherings-grid">
+        <figure class="g-image fade-up d1">
+          <img src="assets/images/gathering-landscape.jpg" alt="Sierra Nevada de Santa Marta, Colombia" />
+        </figure>
+        <div class="g-content">
+          <span class="eyebrow fade-up d2">Next Gatherings</span>
+          <h2 class="g-location fade-up d3">Sierra Nevada de<br>Santa Marta, <em>Colombia</em></h2>
+          <span class="g-date fade-up d4">September 2026</span>
+          <p class="g-desc fade-up d5">A small group of selected participants are invited into the Heart of the World, held by the Elder Sisters of the Wiwa, Arhuaco, and Kogi. Women who have tended this living web for centuries.</p>
+          <a class="g-cta fade-up d6" data-tab="contact" href="#contact">
+            <span>Register here</span>
+            <svg viewBox="0 0 30 10" aria-hidden="true">
+              <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonies reveal">
+      <div class="testimonies-inner">
+        <span class="eyebrow fade-up">Voices · Testimonies</span>
+        <svg class="una-symbol size-md glyph fade-up d1" viewBox="0 0 150.76 214.24" aria-hidden="true">
+          <path d="M65.8.17c6.56,1.77,13.23,1.22,19.78-.17,5.61.5,12.52,1.3,17.78,4.11,9.1,3.98,15.91,11.36,22.26,18.79,11.77,13.8,20.26,29.83,23.75,47.75,1.7,9.06,2.38,19.13-1.3,27.83-.9,2.88-2.39,5.06-3.25,7.73-.57,1.54.53,3.63,1.39,5.07,2.33,4.38,3.3,9.52,4.23,14.25.83,6.2-.39,12.42-1.53,18.38-.1,5.75-2.18,11.09-4.09,15.21-2.13,5.02-3.88,9.57-6.53,14.52-3.95,6.06-7.32,12.15-12.59,17.11-6.9,9.08-16.52,17.48-27.71,21.13-3.25,1.22-6.49,2.09-9.99,2.3-4.84.39-8.83-1.38-13.13-1.58-3.12-.05-5.93,1.35-9.33,1.49-6.96-.02-13.74-2.09-20.01-5.03-5.88-3.11-11.29-7.56-16.42-12.48-5.24-6.33-10.1-13.21-14.89-20.01-5.16-7.76-8.26-16.54-11.27-25.42C.24,143.24.02,135.01.69,126.66c.13-2.3-.5-4.28-.21-6.33,1.13-3.2,2.53-6.36,3.9-9.55,3.06-4.41-.75-8.53-2.3-12.65-2.39-8.47-2.76-18.03-.94-26.59,1.07-5.58,1.89-11.91,4.93-17.13,2.49-8.51,7.21-16.44,12.5-23.29C28.64,14.74,45.42-.11,65.43.11l.37.06ZM60.43,4.87c-8.76,1.66-17.23,5.35-22.9,12.62-3.71,4.36-7.05,7.73-10.04,12.48-1.9,4.06-4.81,6.47-5.98,10.71-3.37,6.75-7.41,13.75-9.44,21.12-2.94,10.87-6.42,21.75-4.92,33.24.11,2.07,1.63,8.48,4.34,6.95,1.62-1.05,3.89-2.84,5.76-3.57,4.74-2.77,10.23-4.79,15.65-5.53,2.32-.64,5.4-1.28,7.97-.82,3.12.57,5.3,1.25,8.58,1.72,5.7,1.28,10.38,4.25,15.38,7.34,2.17,1.59,6.47.36,5.19-2.82-2.42-3.97-4.86-7.53-6.97-11.85-1.32-2.82-3.57-5-4.83-7.83-1.16-3.79-2.43-6.97-4.03-10.61-1.87-4.11-3.73-8.5-4.22-12.95-.88-2.52-2.28-5.26-2.3-7.86-.48-3.37-.48-6.91.07-10.14.33-3.59.38-8.06,1.89-11.46,1.11-4.73,4.7-9.51,7.3-12.93,2-3.35,5.54-5.27,8.8-7.28,1.48-1.44-4.48-.69-4.98-.61l-.32.06ZM90.19,4.91c-1.17-.22-4.91-.59-5.27.44.54.8,1.83,1.59,3.01,2.53,2.4,2.03,4.32,3.66,6.34,5.92,3.95,4.54,5.98,9.91,7.74,15.52,3.11,10.65-.07,23.04-3.76,33.35-1.83,6.19-5.1,11.99-7.11,18.17-1.26,3.49-4.36,6.06-6.15,9.21-1.41,3.25-6.39,8.33-3.12,11.72.79.65,1.81.46,2.87-.1,1.99-1.38,4.38-2.65,6.37-3.91,5.82-2.79,12.29-4.48,18.62-5.71,3.37.28,7.42.54,10.73,1.31,6.27,1.14,12.99,4.87,18.37,8.58,6.1,3.3,4.77-18.57,4.35-21.68-.98-7.27-3.94-12.4-5.18-19.6-.76-2.59-1.09-5.17-2.49-7.24-1.49-1.96-2.41-4.95-3.73-7.13-2.11-2.98-3.38-6.64-4.94-10.01-6.74-9.45-12.56-19.84-22.85-26.17-3.8-2.01-9.3-4.03-13.46-5.13l-.35-.06ZM77.67,7.24c-4.29-1.63-8.65,1.94-11.84,4.17-1.88,1.24-2.81,2.37-3.91,4.17-1.83,3.41-4.32,5.4-5.79,8.81-.99,3.55-2.53,6.15-2.42,10.21-.63,5.64-.42,11.54,1.88,16.96.67,3.49.8,6.96,2.92,9.72,1.44,2.36,2.03,5.22,2.57,7.82,1.62,4.36,4.35,8.5,6.43,12.88,1.59,2.26,3.13,4.12,4.47,7.14.61,1.25,1.65,3.31,3.02,3.37.71.06,1.6-.47,2.37-1.31,1.92-2.65,3.43-5.22,5.1-8.01.6-1.32.45-2.58,1.3-3.74.51-.8,1.29-1.46,1.68-2.54.61-3.5,3.76-4.95,4.36-8.76.22-1.26.44-2.64,1.11-3.72,2.54-3.93,2.73-10.15,4.85-14.24.46-1.11.44-1.92.45-2.75-.08-1.79,1.15-4.73,1.28-6.8.04-1.18-.81-1.84-1.08-2.9-.55-2.77.81-4.47-.16-7.48-.93-2.01-1.69-4.24-2.42-6.44-1.45-4.2-4.08-6.69-7.07-9.5-2.55-3.03-4.86-5.8-8.69-6.93l-.38-.12ZM41.27,97.94c-3.33-.42-9.43-.38-12.51-.2-2.12.29-4.11,1.6-6.06,2.39-3.27,1.53-6.54,3.34-9.13,6.15-.27.34-.39.64-.34.93.25.86,1.49,1.49,2.26,2.16,3.38,3.61,8,4.84,12.64,5.81,3.13,1.47,7.25,1.48,10.51,1.17,1.99-.43,3.05-1.45,4.97-.58,1.76.61,3.16-.84,4.94-1.51,3.82-.72,7.09-2.66,10.46-5.09.77-.57,1.83-1.39,1.75-2.4-.15-1.45-3.43-2.43-5.06-4.24-.39-.37-.87-.79-1.3-1.11-1.27-.96-2.73-.93-4.24-1.21-2.7-.51-6.5-1.71-8.59-2.2l-.29-.06ZM122.37,98.04c-2.77-.69-5.81-.34-10.31.07-8.68.8-13.59,1.79-20.37,6.52-1.07.75-3.38,2-1.69,3.22,2.44,1.79,5.06,4.07,7.93,4.89,1.72.66,3.22,1.54,5.32,1.85,2.69.21,4.22,1.32,6.84,1.78,3.8-.1,9.98.34,12.54-.28.95-.29,2.12-1.12,2.81-1.45,3.24-1.22,6.44-3.24,9.18-5.15,1.5-.78,3.35-2.38,1.77-3.96-1.47-1.72-3.94-3.06-5.75-4.03-2.46-1.53-5.25-2.68-7.94-3.37l-.34-.09ZM75.95,103.95c-.42-.12-1.27-.17-1.88-.12-.65-.08-.34,1.28-.47,1.78-.09.17-1.2.04-1.68.08-.46-.09-.25.55-.3,1.47-.03.89-.04.88.75.85.56.01,1.12-.03,1.24.04.25-.07.82,3.47,1.41,3.18.22,0,.65.01.86.02l.22-.59c-.15-1.16.54-1.67,1.18-2.22,2.18-1.73.36-3.15-1.16-4.42l-.17-.07ZM59.71,208.94c1.19.54,6.11.75,6.61-.31-1.35-1.5-4.03-2.3-5.6-4-8.73-7.7-12.92-18.66-13.6-29.96-.11-7.59,2.3-14.26,4.2-21.8,2.22-5.49,5.76-15.15,8.03-19.58,3.43-4.99,6.74-11.18,10.15-16.22,2-2.8-.36-6.39-3.77-4.9-2.45.92-4.14,2.86-6.54,3.97-1.84,1.02-4.12,1.71-6.05,2.59-4.02,1.43-7.81,3.58-13.59,3.4-9.8-.16-18.95-3.83-26.78-9.34-4.49-3.13-5.33,2.88-5.91,6.68-.92,12.1,3.32,24.76,6.11,36.37,2.62,6.07,5.88,10.36,8.45,16.89,3.94,9.33,11.44,17.19,17.45,25.16,5.49,5.75,13.53,8.14,20.51,10.95l.33.1ZM84.57,208.89c1.61.78,5.38.22,7.27-.72,3.02-1.56,7.76-2.27,11.04-4.03,3.15-1.6,5.22-3.72,8.04-6.05,6.52-6.38,11.43-13.69,16.44-21.3,2.93-6.03,5.69-11.99,8.82-17.95,1.71-3.5,2.17-9.18,3.74-13.47,2.54-6.7,2.96-13.32,3.94-20.4,0-2.37-.23-4.18-.48-6.51-.08-2.29-1.03-7.42-4.45-6.29-7.97,5.3-16.91,9.75-27.13,9.86-7.12.1-13.81-2.83-20.15-5.39-2.19-.95-3.89-2.77-6.05-4.2-1.19-.82-2.87-1.02-3.92-.04-3.04,3.58,3.17,10.4,4.87,13.65,1.83,3.64,4.06,5.96,5.51,10.24,1,2.97,2.15,5.84,3.91,8.42,1.51,2.29,1.73,5.56,2.66,8.22.93,2.3,2.11,3.52,2.63,5.89.32,3.68,1.23,8.2,1.83,12.19.19,4.38-.19,10.19-.96,13.95-1.24,4.16-3.73,9.42-6.11,13.22-2.76,3.77-6.19,7.06-10.31,9.17-.56.41-.81.48-1.25,1.07-.08.15-.08.27,0,.38l.11.1ZM75.71,121.58c-1.05-.23-2.2.78-2.82,1.73-1.69,2.53-3.16,4.6-4.4,6.68-2.29,5.12-5.89,10.18-7.16,15.71-.42,2.3-1.19,4.07-2.28,6.11-2.51,4.39-3.68,9.69-4.66,14.6-.47,2.45.89,4.74-.68,6.84-.62,1.29.65,2.65.48,3.94-.33,1.89-.81,4.21-.34,6.22.93,4.58,2.65,8.23,5.78,11.71,3.94,4.91,8.68,10.98,15.49,11.63,3.23.57,6.6-2.39,9.03-4.41,5.66-4.36,10.15-10.6,12.07-17.4.92-2.05.45-3.92.12-5.94-.27-2.73.56-5.48.29-8.18-.27-5.37-1.64-10.77-3.15-16.07-2.6-4.94-5.12-10.27-7.23-15.59-.82-1.59-1.59-3.11-2.08-4.85-1.19-2.68-2.94-5.72-4.46-8.03-.52-.76-1.12-1.52-1.61-2.3-.59-.96-1-2.02-2.11-2.33l-.28-.06Z" fill="currentColor"/>
+        </svg>
+
+        <div class="voices-carousel fade-up d2">
+          <div class="voices-track" id="voices-track">
+            <div class="voice slide">
+              <p class="quote q-lead">"There are places in the world that invite us to show up differently. Not with our expertise or answers, but with an open heart and willingness to move beyond what we know or even believe."</p>
+              <p class="quote q-line">"Indigenous leadership is a lived practice, not a theory."</p>
+              <p class="quote q-line">"Like weaving, this work is slow. It is deliberate. It resists urgency."</p>
+              <p class="attribution">Pat Mitchell · Sierra Nevada, March 2026</p>
+            </div>
+            <div class="voice slide">
+              <p class="quote q-lead">"Intention and thought are not preparation for the work. It is the work itself."</p>
+              <p class="quote q-line">"I came as a leader. I left as a Younger Sister."</p>
+              <p class="attribution">Participant · Sierra Nevada, March 2026</p>
+            </div>
+          </div>
+          <div class="voices-dots" id="voices-dots">
+            <button class="dot active" data-slide="0" aria-label="Voice 1"></button>
+            <button class="dot" data-slide="1" aria-label="Voice 2"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="previous-gatherings reveal">
+      <div class="prev-inner">
+        <div class="prev-head">
+          <span class="eyebrow fade-up">Previous Gatherings</span>
+          <h2 class="prev-title fade-up d1">A constellation<br><em>of circles.</em></h2>
+        </div>
+        <div class="prev-grid">
+          <article class="prev-item fade-up d1">
+            <figure class="prev-image"><img src="assets/images/gathering-landscape.jpg" alt="Sierra Nevada gathering, March 2026" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">001</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">March 2026</span>
+            </div>
+          </article>
+          <article class="prev-item fade-up d2">
+            <figure class="prev-image"><img src="assets/images/exchange-photo.jpg" alt="Sierra Nevada gathering, October 2025" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">002</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">October 2025</span>
+            </div>
+          </article>
+          <article class="prev-item fade-up d3">
+            <figure class="prev-image"><img src="assets/images/gathering-small.jpg" alt="Sierra Nevada gathering, June 2025" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">003</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">June 2025</span>
+            </div>
+          </article>
+          <article class="prev-item fade-up d4">
+            <figure class="prev-image"><img src="assets/images/WEB3.png" alt="Sierra Nevada gathering, February 2025" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">004</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">February 2025</span>
+            </div>
+          </article>
+          <article class="prev-item fade-up d5">
+            <figure class="prev-image"><img src="assets/images/WEB2.png" alt="Sierra Nevada gathering, September 2024" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">005</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">September 2024</span>
+            </div>
+          </article>
+          <article class="prev-item fade-up d6">
+            <figure class="prev-image"><img src="assets/images/WEB1.png" alt="Sierra Nevada gathering, March 2024" /></figure>
+            <div class="prev-meta">
+              <span class="prev-num">006</span>
+              <h3 class="prev-loc">Sierra Nevada<br>de Santa Marta</h3>
+              <span class="prev-date">March 2024</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== CONTACT TAB ===== -->
+  <div class="tab" data-tab-content="contact">
+    <section class="contact reveal">
+      <div class="contact-inner">
+        <span class="eyebrow fade-up">Contact</span>
+        <h2 class="contact-title fade-up d1">Begin <em>the conversation</em></h2>
+        <p class="contact-desc fade-up d3">If you feel called to take part in a future gathering, to collaborate, or simply to learn more, write to us. We respond to those who arrive with intention.</p>
+        <form class="contact-form fade-up d4" id="contact-form" novalidate>
+          <div class="form-row">
+            <label><span class="label">Name</span><input type="text" name="name" required /></label>
+            <label><span class="label">Email</span><input type="email" name="email" required /></label>
+          </div>
+          <label>
+            <span class="label">I am writing about</span>
+            <select name="interest">
+              <option>A future gathering</option>
+              <option>Collaboration &amp; partnership</option>
+              <option>Press &amp; media</option>
+              <option>General inquiry</option>
+            </select>
+          </label>
+          <label>
+            <span class="label">Your message</span>
+            <textarea name="message" rows="4" placeholder="Tell us a little about yourself and why you are reaching out."></textarea>
+          </label>
+          <button type="submit" class="contact-submit">
+            <span>Send message</span>
+            <svg viewBox="0 0 30 10" aria-hidden="true">
+              <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+            </svg>
+          </button>
+        </form>
+        <div class="form-success" id="form-success">
+          Thank you. Your message has been received. We will respond with care.
+        </div>
+        <p class="contact-meta fade-up d5">hello@unagatherings.com</p>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <img class="footer-mark" src="assets/images/una-logo-wide.png" alt="ÚNA" />
+      <span class="footer-tagline">A thread between worlds</span>
+    </div>
+    <div class="footer-links">
+      <a href="#home" data-tab="home">Home</a>
+      <a href="#about" data-tab="about">About</a>
+      <a href="#gatherings" data-tab="gatherings">Gatherings</a>
+      <a href="#contact" data-tab="contact">Contact</a>
+      <span class="footer-links-sep">·</span>
+      <a href="#">Instagram</a>
+      <a href="#">Newsletter</a>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ÚNA Gatherings</span>
+      <span>Sierra Nevada de Santa Marta</span>
+      <a href="/admin/login" class="footer-admin-link" aria-label="Acceso organizadora">Organizadora</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== REGISTRATION MODAL ===== -->
+<div class="reg-modal" id="reg-modal" aria-hidden="true">
+  <div class="reg-backdrop" id="reg-backdrop"></div>
+  <div class="reg-panel" role="dialog" aria-modal="true" aria-labelledby="reg-title">
+    <button class="reg-close" id="reg-close" aria-label="Close">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <div class="reg-inner">
+      <span class="eyebrow">Next Gathering · September 2026</span>
+      <h2 class="reg-title" id="reg-title">Apply to <em>attend</em></h2>
+      <p class="reg-desc">We review each application with care. If your profile aligns with the circle, we will reach out with next steps.</p>
+      <form class="contact-form" id="reg-form" novalidate>
+        <div class="form-row">
+          <label><span class="label">Full name</span><input type="text" name="name" required /></label>
+          <label><span class="label">Email</span><input type="email" name="email" required /></label>
+        </div>
+        <div class="form-row">
+          <label><span class="label">Country of residence</span><input type="text" name="country" required /></label>
+          <label><span class="label">Profession</span><input type="text" name="profession" /></label>
+        </div>
+        <label>
+          <span class="label">Why do you feel called to attend?</span>
+          <textarea name="motivation" rows="5" placeholder="Share what draws you to this gathering and a little about who you are."></textarea>
+        </label>
+        <label>
+          <span class="label">How did you hear about ÚNA?</span>
+          <select name="source">
+            <option value="">Select one</option>
+            <option>Instagram</option>
+            <option>Word of mouth</option>
+            <option>LinkedIn</option>
+            <option>A past participant</option>
+            <option>Press or media</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>
+          <span class="label">Social media or LinkedIn (optional)</span>
+          <input type="text" name="social" placeholder="https://" />
+        </label>
+        <button type="submit" class="contact-submit">
+          <span>Submit application</span>
+          <svg viewBox="0 0 30 10" aria-hidden="true">
+            <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+          </svg>
+        </button>
+      </form>
+      <div class="form-success" id="reg-success">
+        Your application has been received. We will review it with care and be in touch.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/main.js?v=8"></script>
+</body>
+</html>
