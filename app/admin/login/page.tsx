@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+
+const IS_MOCK =
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -17,21 +20,31 @@ export default function AdminLoginPage() {
     setLoading(true);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setError("Credenciales incorrectas. Verifica tu correo y contraseña.");
-        return;
+      if (IS_MOCK) {
+        const res = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error ?? "Invalid credentials.");
+          return;
+        }
+      } else {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+        if (authError) {
+          setError("Invalid credentials. Please check your email and password.");
+          return;
+        }
       }
 
       router.push("/admin/dashboard");
       router.refresh();
     } catch {
-      setError("No se pudo conectar. Intenta de nuevo.");
+      setError("Could not connect. Please try again.");
     } finally {
       setLoading(false);
     }

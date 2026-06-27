@@ -1,13 +1,30 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 
 const IS_MOCK =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
   process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
 export async function middleware(request: NextRequest) {
-  // Skip auth in mock/frontend mode
-  if (IS_MOCK) return NextResponse.next({ request });
+  if (IS_MOCK) {
+    const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+    const isLoginPage = request.nextUrl.pathname === "/admin/login";
+    const sessionCookie = request.cookies.get(SESSION_COOKIE);
+    const isAuthenticated = !!sessionCookie && verifySessionToken(sessionCookie.value);
+
+    if (isAdminRoute && !isLoginPage && !isAuthenticated) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      return NextResponse.redirect(url);
+    }
+    if (isLoginPage && isAuthenticated) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/dashboard";
+      return NextResponse.redirect(url);
+    }
+    return NextResponse.next({ request });
+  }
 
   let supabaseResponse = NextResponse.next({ request });
 
