@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { sendApprovalEmail } from "@/lib/email/send-approval-email";
 import type { Application } from "@/lib/supabase/types";
 
@@ -16,28 +16,24 @@ export async function PATCH(
 ) {
   const { id } = await params;
 
-  // Auth check
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "No autorizado." }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   const body = await request.json();
   const { action } = body;
 
   if (action !== "approve" && action !== "reject") {
-    return NextResponse.json({ error: "Acción inválida." }, { status: 400 });
+    return NextResponse.json({ error: "Invalid action." }, { status: 400 });
   }
 
-  // Use service client for admin writes
-  const service = await createServiceClient();
-
   // Fetch application + retreat
-  const { data: applicationRaw, error: fetchError } = await service
+  const { data: applicationRaw, error: fetchError } = await supabase
     .from("applications")
     .select("*, retreat:retreats(*)")
     .eq("id", id)
@@ -46,25 +42,22 @@ export async function PATCH(
   const application = applicationRaw as Application | null;
 
   if (fetchError || !application || !applicationRaw) {
-    return NextResponse.json({ error: "Aplicación no encontrada." }, { status: 404 });
+    return NextResponse.json({ error: "Application not found." }, { status: 404 });
   }
 
   if (application.status !== "pending") {
-    return NextResponse.json(
-      { error: "Esta aplicación ya fue procesada." },
-      { status: 409 }
-    );
+    return NextResponse.json({ error: "Application already processed." }, { status: 409 });
   }
 
   if (action === "reject") {
-    const { error } = await service
+    const { error } = await supabase
       .from("applications")
       .update({ status: "rejected", updated_at: new Date().toISOString() })
       .eq("id", id);
 
     if (error) {
       console.error("[PATCH /api/admin/applications] reject error:", error);
-      return NextResponse.json({ error: "Error al rechazar." }, { status: 500 });
+      return NextResponse.json({ error: "Failed to reject application." }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true, name: application.name });
@@ -75,7 +68,7 @@ export async function PATCH(
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 
-  const { error: updateError } = await service
+  const { error: updateError } = await supabase
     .from("applications")
     .update({
       status: "approved",
@@ -87,7 +80,7 @@ export async function PATCH(
 
   if (updateError) {
     console.error("[PATCH /api/admin/applications] approve error:", updateError);
-    return NextResponse.json({ error: "Error al aprobar." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to approve application." }, { status: 500 });
   }
 
   // Send approval email (non-blocking — failure does NOT revert approval)
