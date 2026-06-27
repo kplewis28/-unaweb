@@ -66,8 +66,16 @@ export default function DashboardClient({ applications, userEmail }: Props) {
   }
 
   async function handleLogout() {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    const isMock =
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
+
+    if (isMock) {
+      await fetch("/api/admin/logout", { method: "POST" });
+    } else {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+    }
     router.push("/admin/login");
   }
 
