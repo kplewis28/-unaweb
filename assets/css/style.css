@@ -39,10 +39,10 @@ img { max-width: 100%; display: block; }
 /* ---- NAV ---- */
 .topnav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 40;
-  background: transparent;
+  background: var(--olive);
   display: grid; grid-template-columns: auto 1fr auto; align-items: center;
   padding: 22px clamp(22px, 4vw, 52px);
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid rgba(171,170,112,.1);
   transition: background .4s, border-color .4s;
 }
 .topnav.scrolled {
