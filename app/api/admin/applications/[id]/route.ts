@@ -97,7 +97,7 @@ export async function PATCH(
   });
 
   if (emailResult.success) {
-    await service
+    await supabase
       .from("applications")
       .update({ access_code_email_sent: true })
       .eq("id", id);
