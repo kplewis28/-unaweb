@@ -44,6 +44,27 @@ export default function AdminLoginPage() {
         background: "var(--cream-warm)",
       }}
     >
+      <a
+        href="/"
+        style={{
+          position: "fixed",
+          top: "24px",
+          left: "28px",
+          fontFamily: "var(--font-sans)",
+          fontSize: "10px",
+          letterSpacing: "0.28em",
+          textTransform: "uppercase",
+          color: "var(--sage)",
+          textDecoration: "none",
+          opacity: 0.75,
+          transition: "opacity 0.3s",
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+        onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.75")}
+      >
+        ← Volver
+      </a>
+
       <div style={{ width: "100%", maxWidth: "360px" }}>
         {/* Brand mark */}
         <div style={{ textAlign: "center", marginBottom: "52px" }}>
