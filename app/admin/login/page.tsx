@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
         onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
         onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.75")}
       >
-        ← Volver
+        ← Back
       </a>
 
       <div style={{ width: "100%", maxWidth: "360px" }}>
@@ -108,7 +108,7 @@ export default function AdminLoginPage() {
               lineHeight: 1.2,
             }}
           >
-            Portal de administración
+            Admin Portal
           </h1>
           <div
             style={{
@@ -125,7 +125,7 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "28px" }}>
             <label htmlFor="email" className="una-input-label">
-              Correo electrónico
+              Email
             </label>
             <input
               id="email"
@@ -141,7 +141,7 @@ export default function AdminLoginPage() {
 
           <div style={{ marginBottom: "36px" }}>
             <label htmlFor="password" className="una-input-label">
-              Contraseña
+              Password
             </label>
             <input
               id="password"
@@ -175,7 +175,7 @@ export default function AdminLoginPage() {
             className="una-btn"
             style={{ width: "100%" }}
           >
-            {loading ? "Ingresando…" : "Ingresar"}
+            {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 

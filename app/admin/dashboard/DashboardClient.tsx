@@ -18,9 +18,9 @@ interface Props {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  pending: "Pendiente",
-  approved: "Aprobada",
-  rejected: "Rechazada",
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -31,10 +31,10 @@ const STATUS_CLASSES: Record<string, string> = {
 
 const HOW_HEARD_LABELS: Record<string, string> = {
   instagram: "Instagram",
-  referido: "Un amigo o conocido",
-  "boca-a-boca": "Boca a boca",
-  evento: "En un evento",
-  otro: "Otro",
+  referido: "A friend or acquaintance",
+  "boca-a-boca": "Word of mouth",
+  evento: "At an event",
+  otro: "Other",
 };
 
 const label: React.CSSProperties = {
@@ -93,7 +93,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
       if (!res.ok) {
         setResults((prev) => ({
           ...prev,
-          [id]: { applicationId: id, type: "error", message: data.error ?? "Error inesperado" },
+          [id]: { applicationId: id, type: "error", message: data.error ?? "Unexpected error" },
         }));
       } else if (action === "approve") {
         if (data.emailSent === false) {
@@ -102,7 +102,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
             [id]: {
               applicationId: id,
               type: "email-failed",
-              message: `Código generado para ${data.name}, pero el correo no se pudo enviar. Código: ${data.accessCode}`,
+              message: `Code generated for ${data.name}, but the email could not be sent. Code: ${data.accessCode}`,
               code: data.accessCode,
             },
           }));
@@ -112,7 +112,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
             [id]: {
               applicationId: id,
               type: "success",
-              message: `Código generado y correo enviado a ${data.name}`,
+              message: `Code generated and email sent to ${data.name}`,
             },
           }));
         }
@@ -122,7 +122,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
           [id]: {
             applicationId: id,
             type: "success",
-            message: `Aplicación de ${data.name} rechazada.`,
+            message: `Application from ${data.name} rejected.`,
           },
         }));
       }
@@ -131,7 +131,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
     } catch {
       setResults((prev) => ({
         ...prev,
-        [id]: { applicationId: id, type: "error", message: "No se pudo conectar con el servidor." },
+        [id]: { applicationId: id, type: "error", message: "Could not connect to the server." },
       }));
     } finally {
       setLoadingId(null);
@@ -175,13 +175,13 @@ export default function DashboardClient({ applications, userEmail }: Props) {
               fontFamily: "var(--font-sans)", fontSize: "10px",
               letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--sage)",
               opacity: 0.6,
-            }}>Panel administrativo</span>
+            }}>Admin Panel</span>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--sage)", opacity: 0.7,
             }}>{userEmail}</span>
-            <button onClick={handleLogout} className="una-btn-ghost">Salir</button>
+            <button onClick={handleLogout} className="una-btn-ghost">Sign out</button>
           </div>
         </div>
       </header>
@@ -198,13 +198,13 @@ export default function DashboardClient({ applications, userEmail }: Props) {
             fontFamily: "var(--font-serif)", fontWeight: 400,
             fontSize: "clamp(30px, 3vw, 42px)", color: "var(--olive)",
           }}>
-            Aplicaciones
+            Applications
           </h1>
           <p style={{
             margin: 0, fontFamily: "var(--font-sans)", fontSize: "11px",
             letterSpacing: "0.08em", color: "var(--sage)",
           }}>
-            {counts.all} total · {counts.pending} pendientes · {counts.approved} aprobadas · {counts.rejected} rechazadas
+            {counts.all} total · {counts.pending} pending · {counts.approved} approved · {counts.rejected} rejected
           </p>
         </div>
 
@@ -228,7 +228,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                 cursor: "pointer", transition: "color 0.2s",
               }}
             >
-              {tab === "all" ? "Todas" : STATUS_LABELS[tab]}
+              {tab === "all" ? "All" : STATUS_LABELS[tab]}
               {" "}<span style={{ opacity: 0.55 }}>({counts[tab]})</span>
             </button>
           ))}
@@ -240,7 +240,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
             textAlign: "center", fontFamily: "var(--font-serif)",
             fontSize: "20px", color: "var(--sage)", padding: "80px 0",
           }}>
-            No hay aplicaciones en esta categoría.
+            No applications in this category.
           </p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
@@ -305,14 +305,14 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                             className="una-btn-ghost"
                             style={{ color: "var(--success)", borderColor: "rgba(58,107,58,0.35)" }}
                           >
-                            {isLoading ? "…" : "Aprobar"}
+                            {isLoading ? "…" : "Approve"}
                           </button>
                           <button
                             disabled={isLoading}
                             onClick={() => handleAction(app.id, "reject")}
                             className="una-btn-danger"
                           >
-                            {isLoading ? "…" : "Rechazar"}
+                            {isLoading ? "…" : "Reject"}
                           </button>
                         </div>
                       )}
@@ -323,7 +323,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                             margin: "0 0 2px", fontFamily: "var(--font-sans)",
                             fontSize: "9px", letterSpacing: "0.22em",
                             textTransform: "uppercase", color: "var(--sage)",
-                          }}>Código de acceso</p>
+                          }}>Access code</p>
                           <p style={{
                             margin: "0 0 2px", fontFamily: "var(--font-sans)",
                             fontSize: "18px", letterSpacing: "0.18em", color: "var(--olive)",
@@ -335,7 +335,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                               margin: 0, fontFamily: "var(--font-sans)",
                               fontSize: "10px", color: "var(--sage)", opacity: 0.7,
                             }}>
-                              Expira {expiresAt}
+                              Expires {expiresAt}
                             </p>
                           )}
                           {!app.access_code_email_sent && (
@@ -343,7 +343,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                               margin: "4px 0 0", fontFamily: "var(--font-sans)",
                               fontSize: "10px", color: "var(--error)",
                             }}>
-                              Correo no enviado
+                              Email not sent
                             </p>
                           )}
                         </div>
@@ -363,7 +363,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                         onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
                         onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.75")}
                       >
-                        {isExpanded ? "Ocultar" : "Ver aplicación"}
+                        {isExpanded ? "Hide" : "View application"}
                       </button>
                     </div>
                   </div>
@@ -379,7 +379,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                       {/* Why attend */}
                       {app.why_attend && (
                         <div>
-                          <span style={label}>¿Por qué quiere asistir?</span>
+                          <span style={label}>Why do they want to attend?</span>
                           <p style={{ ...value, maxWidth: "680px" }}>{app.why_attend}</p>
                         </div>
                       )}
@@ -388,7 +388,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                       <div style={{ display: "flex", flexWrap: "wrap", gap: "32px" }}>
                         {app.how_heard && (
                           <div>
-                            <span style={label}>¿Cómo nos conoció?</span>
+                            <span style={label}>How did they hear about us?</span>
                             <p style={{ ...value, fontSize: "15px", margin: 0 }}>
                               {HOW_HEARD_LABELS[app.how_heard] ?? app.how_heard}
                             </p>
@@ -396,7 +396,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                         )}
                         {app.social_media && (
                           <div>
-                            <span style={label}>Red social</span>
+                            <span style={label}>Social media</span>
                             <p style={{ ...value, fontSize: "15px", margin: 0 }}>
                               {app.social_media}
                             </p>
@@ -404,7 +404,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                         )}
                         {app.retreat && (
                           <div>
-                            <span style={label}>Retiro</span>
+                            <span style={label}>Retreat</span>
                             <p style={{ ...value, fontSize: "15px", margin: 0 }}>
                               {app.retreat.name}
                             </p>
@@ -415,7 +415,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                       {/* Notes */}
                       {app.notes && (
                         <div>
-                          <span style={label}>Notas internas</span>
+                          <span style={label}>Internal notes</span>
                           <p style={{ ...value, fontSize: "15px", maxWidth: "680px", margin: 0 }}>
                             {app.notes}
                           </p>
