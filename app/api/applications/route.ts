@@ -4,27 +4,25 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { retreat_id, name, email, country, profession, why_attend, how_heard, social_media } = body;
+    const { retreat_id, retreat_slug, name, email, country, profession, why_attend, how_heard, social_media } = body;
 
-    if (!retreat_id || !name?.trim() || !email?.trim()) {
-      return NextResponse.json(
-        { error: "Nombre, correo y retiro son requeridos." },
-        { status: 400 }
-      );
+    if (!name?.trim() || !email?.trim()) {
+      return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
+    }
+    if (!retreat_id && !retreat_slug) {
+      return NextResponse.json({ error: "Retreat is required." }, { status: 400 });
     }
 
     const supabase = await createClient();
 
-    // Verify retreat exists and is active
-    const { data: retreat } = await supabase
-      .from("retreats")
-      .select("id")
-      .eq("id", retreat_id)
-      .eq("is_active", true)
-      .single();
+    // Look up retreat by slug or id
+    const query = supabase.from("retreats").select("id").eq("is_active", true);
+    const { data: retreat } = retreat_slug
+      ? await query.eq("slug", retreat_slug).single()
+      : await query.eq("id", retreat_id).single();
 
     if (!retreat) {
-      return NextResponse.json({ error: "Retiro no encontrado." }, { status: 404 });
+      return NextResponse.json({ error: "Retreat not found or no longer active." }, { status: 404 });
     }
 
     const { error } = await supabase.from("applications").insert({
@@ -41,11 +39,11 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("[POST /api/applications]", error);
-      return NextResponse.json({ error: "Error al guardar tu aplicación." }, { status: 500 });
+      return NextResponse.json({ error: "Failed to save application." }, { status: 500 });
     }
 
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch {
-    return NextResponse.json({ error: "Error inesperado." }, { status: 500 });
+    return NextResponse.json({ error: "Unexpected error." }, { status: 500 });
   }
 }

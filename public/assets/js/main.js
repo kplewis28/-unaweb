@@ -213,12 +213,11 @@
   /* -------- REGISTRATION MODAL -------- */
   (function(){
     var modal=document.getElementById("reg-modal");
-    var openBtn=document.getElementById("open-register");
     var closeBtn=document.getElementById("reg-close");
     var backdrop=document.getElementById("reg-backdrop");
     var regForm=document.getElementById("reg-form");
     var regSuccess=document.getElementById("reg-success");
-    if(!modal||!openBtn) return;
+    if(!modal) return;
 
     function openModal(){
       modal.classList.add("open");
@@ -230,10 +229,14 @@
       modal.classList.remove("open");
       modal.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
-      openBtn.focus();
     }
 
-    openBtn.addEventListener("click", openModal);
+    // Wire all open-register triggers (hero button + gatherings link)
+    document.getElementById("open-register") && document.getElementById("open-register").addEventListener("click", openModal);
+    document.querySelectorAll(".js-open-register").forEach(function(el){
+      el.addEventListener("click", function(e){ e.preventDefault(); openModal(); });
+    });
+
     if(closeBtn) closeBtn.addEventListener("click", closeModal);
     if(backdrop) backdrop.addEventListener("click", closeModal);
     document.addEventListener("keydown", function(e){
@@ -250,8 +253,41 @@
           else regForm.querySelector('[name="email"]').focus();
           return;
         }
-        regForm.style.display="none";
-        if(regSuccess) regSuccess.classList.add("show");
+        var submitBtn=regForm.querySelector('[type="submit"]');
+        var submitSpan=submitBtn.querySelector("span");
+        submitBtn.disabled=true;
+        submitSpan.textContent="Sending…";
+
+        fetch("/api/applications",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            retreat_slug:"sierra-nevada-2026",
+            name:name,
+            email:email,
+            country:(regForm.querySelector('[name="country"]').value||"").trim()||null,
+            profession:(regForm.querySelector('[name="profession"]').value||"").trim()||null,
+            why_attend:(regForm.querySelector('[name="motivation"]').value||"").trim()||null,
+            how_heard:regForm.querySelector('[name="source"]').value||null,
+            social_media:(regForm.querySelector('[name="social"]').value||"").trim()||null
+          })
+        })
+        .then(function(r){return r.json();})
+        .then(function(data){
+          if(data.ok){
+            regForm.style.display="none";
+            if(regSuccess) regSuccess.classList.add("show");
+          } else {
+            submitBtn.disabled=false;
+            submitSpan.textContent="Submit application";
+            alert(data.error||"Something went wrong. Please try again.");
+          }
+        })
+        .catch(function(){
+          submitBtn.disabled=false;
+          submitSpan.textContent="Submit application";
+          alert("Could not connect. Please try again.");
+        });
       });
     }
   })();
