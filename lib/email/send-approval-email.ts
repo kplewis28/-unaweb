@@ -15,7 +15,7 @@ export async function sendApprovalEmail(
   const { toName, toEmail, retreatName, accessCode, expiresAt, paymentUrl } =
     params;
 
-  const expiresFormatted = expiresAt.toLocaleDateString("es-ES", {
+  const expiresFormatted = expiresAt.toLocaleDateString("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -25,7 +25,7 @@ export async function sendApprovalEmail(
 
   const html = `
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -56,12 +56,12 @@ export async function sendApprovalEmail(
           <tr>
             <td style="padding-bottom:28px;">
               <h1 style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:400;color:#473e0f;line-height:1.15;">
-                ${firstName},<br/>fuiste seleccionada.
+                ${firstName},<br/>you've been selected.
               </h1>
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#2a2a2a;line-height:1.55;">
-                Con mucha alegría te informamos que tu aplicación para
-                <em>${retreatName}</em> ha sido revisada y aprobada.
-                Nos encantaría tenerte en este encuentro.
+                We're delighted to let you know that your application for
+                <em>${retreatName}</em> has been reviewed and approved.
+                We would love to have you join us for this gathering.
               </p>
             </td>
           </tr>
@@ -73,13 +73,13 @@ export async function sendApprovalEmail(
                 <tr>
                   <td style="background:#efecdf;border:1px solid rgba(171,170,112,0.4);padding:28px 32px;">
                     <p style="margin:0 0 10px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:0.28em;text-transform:uppercase;color:#abaa70;">
-                      Tu código de acceso
+                      Your access code
                     </p>
                     <p style="margin:0 0 6px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:28px;font-weight:500;letter-spacing:0.18em;color:#473e0f;">
                       ${accessCode}
                     </p>
                     <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10px;color:#6b6730;letter-spacing:0.05em;">
-                      Válido hasta el ${expiresFormatted}
+                      Valid until ${expiresFormatted}
                     </p>
                   </td>
                 </tr>
@@ -91,15 +91,15 @@ export async function sendApprovalEmail(
           <tr>
             <td style="padding-bottom:32px;">
               <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#2a2a2a;line-height:1.55;">
-                Para confirmar tu lugar, ingresa el código en nuestra página de pago.
-                Tu código ya estará pre-cargado en el siguiente enlace:
+                To confirm your spot, enter the code on our payment page.
+                Your code will already be pre-filled at the link below:
               </p>
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="background:#473e0f;">
                     <a href="${paymentUrl}"
                       style="display:inline-block;padding:14px 36px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:#efecdf;text-decoration:none;">
-                      Confirmar mi lugar
+                      Confirm my spot
                     </a>
                   </td>
                 </tr>
@@ -111,8 +111,8 @@ export async function sendApprovalEmail(
           <tr>
             <td style="padding-bottom:40px;">
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#6b6730;line-height:1.6;">
-                Si tienes alguna pregunta, responde a este correo y con gusto te ayudamos.
-                Estamos muy contentas de que hayas decidido compartir este espacio con nosotras.
+                If you have any questions, just reply to this email and we'll be happy to help.
+                We're so glad you've chosen to share this space with us.
               </p>
             </td>
           </tr>
@@ -146,7 +146,7 @@ export async function sendApprovalEmail(
     const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
       to: toEmail,
-      subject: `Tu lugar en ${retreatName} — ÚNA`,
+      subject: `Your spot in ${retreatName} — ÚNA`,
       html,
     });
     if (error) {
