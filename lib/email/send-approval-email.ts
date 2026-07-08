@@ -143,12 +143,16 @@ export async function sendApprovalEmail(
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
       to: toEmail,
       subject: `Tu lugar en ${retreatName} — ÚNA`,
       html,
     });
+    if (error) {
+      console.error("[send-approval-email]", error.message);
+      return { success: false, error: error.message };
+    }
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { cookies } from "next/headers";
 import { sendApprovalEmail } from "@/lib/email/send-approval-email";
+import { MOCK_APPLICATIONS } from "@/lib/mock-data";
+import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import type { Application } from "@/lib/supabase/types";
+
+const IS_MOCK =
+  !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+  process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
 function generateAccessCode(): string {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -10,12 +16,81 @@ function generateAccessCode(): string {
   return `${segment()}-${segment()}`;
 }
 
+async function sendApprovalAndRespond(application: Application, accessCode: string, expiresAt: Date) {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
+  const paymentUrl = `${baseUrl}/pagar?code=${accessCode}`;
+
+  const emailResult = await sendApprovalEmail({
+    toName: application.name,
+    toEmail: application.email,
+    retreatName: application.retreat?.name ?? "el retiro",
+    accessCode,
+    expiresAt,
+    paymentUrl,
+  });
+
+  if (!emailResult.success) {
+    console.error("[send-approval-email] failed:", emailResult.error);
+  }
+
+  return emailResult;
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
 
+  const body = await request.json();
+  const { action } = body;
+
+  if (action !== "approve" && action !== "reject") {
+    return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+  }
+
+  if (IS_MOCK) {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get(SESSION_COOKIE);
+    if (!sessionCookie || !verifySessionToken(sessionCookie.value)) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    const application = MOCK_APPLICATIONS.find((a) => a.id === id);
+    if (!application) {
+      return NextResponse.json({ error: "Application not found." }, { status: 404 });
+    }
+    if (application.status !== "pending") {
+      return NextResponse.json({ error: "Application already processed." }, { status: 409 });
+    }
+
+    if (action === "reject") {
+      application.status = "rejected";
+      application.updated_at = new Date().toISOString();
+      return NextResponse.json({ ok: true, name: application.name });
+    }
+
+    const accessCode = generateAccessCode();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    application.status = "approved";
+    application.access_code = accessCode;
+    application.access_code_expires_at = expiresAt.toISOString();
+    application.updated_at = new Date().toISOString();
+
+    const emailResult = await sendApprovalAndRespond(application, accessCode, expiresAt);
+    application.access_code_email_sent = emailResult.success;
+
+    return NextResponse.json({
+      ok: true,
+      name: application.name,
+      accessCode,
+      emailSent: emailResult.success,
+    });
+  }
+
+  const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,13 +98,6 @@ export async function PATCH(
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
-
-  const body = await request.json();
-  const { action } = body;
-
-  if (action !== "approve" && action !== "reject") {
-    return NextResponse.json({ error: "Invalid action." }, { status: 400 });
   }
 
   // Fetch application + retreat
@@ -84,25 +152,13 @@ export async function PATCH(
   }
 
   // Send approval email (non-blocking — failure does NOT revert approval)
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
-  const paymentUrl = `${baseUrl}/pagar?code=${accessCode}`;
-
-  const emailResult = await sendApprovalEmail({
-    toName: application.name,
-    toEmail: application.email,
-    retreatName: application.retreat?.name ?? "el retiro",
-    accessCode,
-    expiresAt,
-    paymentUrl,
-  });
+  const emailResult = await sendApprovalAndRespond(application, accessCode, expiresAt);
 
   if (emailResult.success) {
     await supabase
       .from("applications")
       .update({ access_code_email_sent: true })
       .eq("id", id);
-  } else {
-    console.error("[send-approval-email] failed:", emailResult.error);
   }
 
   return NextResponse.json({
