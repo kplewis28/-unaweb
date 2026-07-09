@@ -271,7 +271,7 @@
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
-            retreat_slug:"sierra-nevada-2026",
+            retreat_slug:"retiro-una-2026",
             name:name,
             email:email,
             country:(regForm.querySelector('[name="country"]').value||"").trim()||null,
