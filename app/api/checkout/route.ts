@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const { accessCode } = await request.json();
 
     if (!accessCode?.trim()) {
-      return NextResponse.json({ error: "Código de acceso requerido." }, { status: 400 });
+      return NextResponse.json({ error: "Access code required." }, { status: 400 });
     }
 
     const supabase = await createServiceClient();
@@ -20,14 +20,14 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!application) {
-      return NextResponse.json({ error: "Código no válido o no encontrado." }, { status: 404 });
+      return NextResponse.json({ error: "Invalid or unrecognized code." }, { status: 404 });
     }
 
     if (application.access_code_expires_at) {
       const expires = new Date(application.access_code_expires_at);
       if (expires < new Date()) {
         return NextResponse.json(
-          { error: "Este código ha expirado. Contacta a ÚNA para obtener uno nuevo." },
+          { error: "This code has expired. Contact us for a new one." },
           { status: 410 }
         );
       }
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const adapter = getPaymentAdapter();
     const result = await adapter.createCheckout({
       applicationId: application.id,
-      retreatName: retreat?.name ?? "Retiro ÚNA",
+      retreatName: retreat?.name ?? "ÚNA Retreat",
       price: retreat?.price ?? 0,
       currency: retreat?.currency ?? "USD",
       customerEmail: application.email,
@@ -52,6 +52,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: result.url });
   } catch (err) {
     console.error("[POST /api/checkout]", err);
-    return NextResponse.json({ error: "Error al crear el pago." }, { status: 500 });
+    return NextResponse.json({ error: "Failed to create checkout." }, { status: 500 });
   }
 }

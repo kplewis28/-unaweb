@@ -96,9 +96,9 @@ export async function sendApprovalEmail(
               </p>
               <table cellpadding="0" cellspacing="0">
                 <tr>
-                  <td style="background:#473e0f;">
+                  <td style="background:#473e0f;border-radius:8px;">
                     <a href="${paymentUrl}"
-                      style="display:inline-block;padding:14px 36px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:#efecdf;text-decoration:none;">
+                      style="display:inline-block;padding:14px 36px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:#efecdf;text-decoration:none;border-radius:8px;">
                       Confirm my spot
                     </a>
                   </td>

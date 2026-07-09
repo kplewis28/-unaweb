@@ -29,12 +29,12 @@ export default function PagarClient() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error ?? "Código no válido.");
+        throw new Error(data.error ?? "Invalid code.");
       }
 
       window.location.href = data.url;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error inesperado.");
+      setError(err instanceof Error ? err.message : "Unexpected error.");
       setLoading(false);
     }
   }
@@ -54,18 +54,6 @@ export default function PagarClient() {
       <div style={{ width: "100%", maxWidth: "400px" }}>
         {/* Brand */}
         <div style={{ textAlign: "center", marginBottom: "52px" }}>
-          <p
-            style={{
-              margin: "0 0 12px",
-              fontFamily: "var(--font-sans)",
-              fontSize: "10px",
-              letterSpacing: "0.32em",
-              textTransform: "uppercase",
-              color: "var(--sage)",
-            }}
-          >
-            ÚNA
-          </p>
           <h1
             style={{
               margin: 0,
@@ -76,7 +64,7 @@ export default function PagarClient() {
               lineHeight: 1.2,
             }}
           >
-            Confirmar lugar
+            Confirm your spot
           </h1>
           <p
             style={{
@@ -87,7 +75,7 @@ export default function PagarClient() {
               lineHeight: 1.5,
             }}
           >
-            Ingresa tu código de acceso para proceder al pago y reservar tu lugar.
+            Enter your access code to proceed to payment and reserve your spot.
           </p>
           <div
             style={{
@@ -103,7 +91,7 @@ export default function PagarClient() {
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "32px" }}>
             <label htmlFor="code" className="una-input-label">
-              Código de acceso
+              Access code
             </label>
             <input
               id="code"
@@ -130,7 +118,7 @@ export default function PagarClient() {
                 letterSpacing: "0.05em",
               }}
             >
-              Enviado a tu correo al ser aprobada tu aplicación.
+              Sent to your email when your application was approved.
             </p>
           </div>
 
@@ -153,7 +141,7 @@ export default function PagarClient() {
             className="una-btn"
             style={{ width: "100%" }}
           >
-            {loading ? "Verificando…" : "Continuar al pago"}
+            {loading ? "Verifying…" : "Continue to payment"}
           </button>
         </form>
 

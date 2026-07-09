@@ -12,18 +12,6 @@ export default function GraciasPage() {
       }}
     >
       <div style={{ maxWidth: "480px", textAlign: "center" }}>
-        <p
-          style={{
-            margin: "0 0 12px",
-            fontFamily: "var(--font-sans)",
-            fontSize: "10px",
-            letterSpacing: "0.32em",
-            textTransform: "uppercase",
-            color: "var(--sage)",
-          }}
-        >
-          ÚNA
-        </p>
         <div
           style={{
             width: "40px",
@@ -43,7 +31,7 @@ export default function GraciasPage() {
             lineHeight: 1.2,
           }}
         >
-          Tu lugar está confirmado.
+          Your spot is confirmed.
         </h1>
         <p
           style={{
@@ -54,8 +42,8 @@ export default function GraciasPage() {
             lineHeight: 1.55,
           }}
         >
-          Gracias por completar el pago. Recibirás un correo con todos los
-          detalles del retiro muy pronto.
+          Thank you for completing your payment. You will receive an email
+          with all the retreat details very soon.
         </p>
         <p
           style={{
@@ -66,7 +54,7 @@ export default function GraciasPage() {
             lineHeight: 1.55,
           }}
         >
-          Nos vemos pronto.
+          See you soon.
         </p>
         <div
           style={{
@@ -77,6 +65,19 @@ export default function GraciasPage() {
             opacity: 0.6,
           }}
         />
+        <p
+          style={{
+            marginTop: "32px",
+            fontFamily: "var(--font-sans)",
+            fontSize: "9px",
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "var(--sage)",
+            opacity: 0.7,
+          }}
+        >
+          una.eco
+        </p>
       </div>
     </div>
   );
