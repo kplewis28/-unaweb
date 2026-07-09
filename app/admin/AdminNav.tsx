@@ -24,12 +24,14 @@ export default function AdminNav({ right }: Props) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/images/una-logo-wide.png"
-            alt="ÚNA"
-            style={{ height: "24px", width: "auto", display: "block" }}
-          />
+          <a href="/" style={{ display: "flex", lineHeight: 0 }} aria-label="Back to una.eco">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/images/una-logo-wide.png"
+              alt="ÚNA"
+              style={{ height: "24px", width: "auto", display: "block" }}
+            />
+          </a>
           <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
           <span
             style={{
