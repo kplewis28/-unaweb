@@ -100,18 +100,31 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  // Fetch application + retreat
-  const { data: applicationRaw, error: fetchError } = await supabase
+  // Fetch application, then its retreat separately: the applications ->
+  // retreats foreign key isn't registered in PostgREST's schema cache, so
+  // the embedded-relationship select ("*, retreat:retreats(*)") fails
+  // with PGRST200.
+  const { data: applicationRow, error: fetchError } = await supabase
     .from("applications")
-    .select("*, retreat:retreats(*)")
+    .select("*")
     .eq("id", id)
     .single();
 
-  const application = applicationRaw as Application | null;
-
-  if (fetchError || !application || !applicationRaw) {
+  if (fetchError || !applicationRow) {
     return NextResponse.json({ error: "Application not found." }, { status: 404 });
   }
+
+  let retreat = null;
+  if (applicationRow.retreat_id) {
+    const { data: retreatRow } = await supabase
+      .from("retreats")
+      .select("*")
+      .eq("id", applicationRow.retreat_id)
+      .single();
+    retreat = retreatRow ?? null;
+  }
+
+  const application = { ...applicationRow, retreat } as Application;
 
   if (application.status !== "pending") {
     return NextResponse.json({ error: "Application already processed." }, { status: 409 });

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
 
     // Look up retreat by slug or id
-    const query = supabase.from("retreats").select("id").eq("is_active", true);
+    const query = supabase.from("retreats").select("id").eq("is_open", true);
     const { data: retreat } = retreat_slug
       ? await query.eq("slug", retreat_slug).single()
       : await query.eq("id", retreat_id).single();
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { error } = await supabase.from("applications").insert({
-      retreat_id,
+      retreat_id: retreat.id,
       name: name.trim(),
       email: email.trim().toLowerCase(),
       country: country?.trim() || null,

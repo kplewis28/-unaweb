@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Application } from "@/lib/supabase/types";
 import DashboardClient from "./DashboardClient";
@@ -32,13 +32,22 @@ export default async function DashboardPage() {
 
   userEmail = user?.email ?? "";
 
-  const { data, error } = await supabase
-    .from("applications")
-    .select("*, retreat:retreats(*)")
-    .order("created_at", { ascending: false });
+  const headersList = await headers();
+  const host = headersList.get("host");
+  const protocol = headersList.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
+  const cookieHeader = headersList.get("cookie") ?? "";
 
-  if (error) console.error("Dashboard fetch error:", error);
-  applications = (data as Application[]) ?? [];
+  const res = await fetch(`${protocol}://${host}/api/admin/applications`, {
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    console.error("Dashboard fetch error:", await res.text());
+  } else {
+    const json = await res.json();
+    applications = (json.applications as Application[]) ?? [];
+  }
 
   return <DashboardClient applications={applications} userEmail={userEmail} />;
 }
