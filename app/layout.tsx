@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ÚNA · Portal",
+  title: "Portal",
   description: "Portal administrativo y de aplicaciones — ÚNA",
 };
 
