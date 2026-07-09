@@ -4,12 +4,46 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Application } from "@/lib/supabase/types";
+import AdminNav from "../AdminNav";
 
 interface ActionResult {
   applicationId: string;
   type: "success" | "error" | "email-failed";
   message: string;
   code?: string;
+}
+
+const RESULT_STYLES: Record<ActionResult["type"], { bg: string; border: string; color: string }> = {
+  success: { bg: "rgba(58,107,58,0.06)", border: "rgba(58,107,58,0.25)", color: "var(--success)" },
+  error: { bg: "rgba(139,58,42,0.06)", border: "rgba(139,58,42,0.25)", color: "var(--error)" },
+  "email-failed": { bg: "rgba(171,170,112,0.14)", border: "rgba(171,170,112,0.4)", color: "#6b6730" },
+};
+
+function ResultIcon({ type }: { type: ActionResult["type"] }) {
+  const color = RESULT_STYLES[type].color;
+  if (type === "error") {
+    return (
+      <svg width="14" height="14" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0 }}>
+        <circle cx="7.5" cy="7.5" r="6.5" stroke={color} strokeWidth="1.2" />
+        <path d="M5.5 5.5L9.5 9.5M9.5 5.5L5.5 9.5" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (type === "email-failed") {
+    return (
+      <svg width="14" height="14" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0 }}>
+        <path d="M7.5 1.3L14 13H1L7.5 1.3Z" stroke={color} strokeWidth="1.2" strokeLinejoin="round" />
+        <path d="M7.5 6V8.7" stroke={color} strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="7.5" cy="10.7" r="0.65" fill={color} />
+      </svg>
+    );
+  }
+  return (
+    <svg width="14" height="14" viewBox="0 0 15 15" fill="none" style={{ flexShrink: 0 }}>
+      <circle cx="7.5" cy="7.5" r="6.5" stroke={color} strokeWidth="1.2" />
+      <path d="M4.6 7.6L6.4 9.4L10.4 5.4" stroke={color} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
 }
 
 interface Props {
@@ -153,38 +187,16 @@ export default function DashboardClient({ applications, userEmail }: Props) {
     <div style={{ minHeight: "100vh", background: "var(--cream-warm)" }}>
 
       {/* Header */}
-      <header style={{
-        borderBottom: "1px solid var(--sage-muted)",
-        background: "var(--cream-warm)",
-        position: "sticky", top: 0, zIndex: 10,
-      }}>
-        <div style={{
-          maxWidth: "1100px", margin: "0 auto",
-          padding: "18px clamp(20px, 4vw, 48px)",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-            <span style={{
-              fontFamily: "var(--font-sans)", fontSize: "10px",
-              letterSpacing: "0.3em", textTransform: "uppercase", color: "var(--sage)",
-            }}>ÚNA</span>
-            <span style={{
-              width: "1px", height: "14px", background: "var(--sage-muted)",
-            }} />
-            <span style={{
-              fontFamily: "var(--font-sans)", fontSize: "10px",
-              letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--sage)",
-              opacity: 0.6,
-            }}>Admin Panel</span>
-          </div>
+      <AdminNav
+        right={
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <span style={{
-              fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--sage)", opacity: 0.7,
+              fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--cream)", opacity: 0.7,
             }}>{userEmail}</span>
-            <button onClick={handleLogout} className="una-btn-ghost">Sign out</button>
+            <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       <main style={{
         maxWidth: "1100px", margin: "0 auto",
@@ -428,23 +440,19 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                   {result && (
                     <div style={{
                       borderTop: "1px solid var(--sage-muted)",
-                      padding: "12px clamp(20px, 3vw, 32px)",
-                      background: result.type === "error"
-                        ? "rgba(139,58,42,0.06)"
-                        : result.type === "email-failed"
-                        ? "rgba(171,170,112,0.12)"
-                        : "rgba(58,107,58,0.06)",
-                      borderLeft: `3px solid ${
-                        result.type === "error" ? "var(--error)"
-                        : result.type === "email-failed" ? "var(--sage)"
-                        : "var(--success)"
-                      }`,
+                      padding: "14px clamp(20px, 3vw, 32px)",
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "10px",
+                      background: RESULT_STYLES[result.type].bg,
                     }}>
+                      <span style={{ marginTop: "2px" }}>
+                        <ResultIcon type={result.type} />
+                      </span>
                       <p style={{
                         margin: 0, fontFamily: "var(--font-sans)", fontSize: "12px",
-                        color: result.type === "error" ? "var(--error)"
-                          : result.type === "email-failed" ? "#6b6730"
-                          : "var(--success)",
+                        letterSpacing: "0.01em", lineHeight: 1.55,
+                        color: RESULT_STYLES[result.type].color,
                       }}>
                         {result.message}
                       </p>

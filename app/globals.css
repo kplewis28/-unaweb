@@ -131,6 +131,29 @@ body {
   border-color: var(--olive);
 }
 
+/* Ghost button, for dark backgrounds (e.g. the olive nav bar) */
+.una-btn-ghost-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid rgba(171, 170, 112, 0.4);
+  padding: 9px 20px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, opacity 0.2s;
+  border-radius: 0;
+}
+
+.una-btn-ghost-dark:hover {
+  border-color: var(--sage);
+  opacity: 0.85;
+}
+
 /* Danger ghost */
 .una-btn-danger {
   display: inline-flex;
