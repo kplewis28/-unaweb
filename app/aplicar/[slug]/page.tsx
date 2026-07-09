@@ -23,7 +23,7 @@ export default async function AplicarPage({ params }: Props) {
     .from("retreats")
     .select("*")
     .eq("slug", slug)
-    .eq("is_active", true)
+    .eq("is_open", true)
     .single();
 
   if (!retreat) notFound();
