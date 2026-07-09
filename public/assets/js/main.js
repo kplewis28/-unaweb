@@ -180,8 +180,35 @@
         else form.querySelector('[name="email"]').focus();
         return;
       }
-      form.style.display="none";
-      success.classList.add("show");
+      var submitBtn=form.querySelector('[type="submit"]');
+      var submitSpan=submitBtn ? submitBtn.querySelector("span") : null;
+      if(submitBtn) submitBtn.disabled=true;
+      if(submitSpan) submitSpan.textContent="Sending…";
+
+      fetch("/api/contact",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          name:name,
+          email:email,
+          interest:(form.querySelector('[name="interest"]').value||"").trim()||null,
+          message:(form.querySelector('[name="message"]').value||"").trim()||null
+        })
+      })
+      .then(function(r){return r.json();})
+      .then(function(data){
+        if(data.ok){
+          form.style.display="none";
+          success.classList.add("show");
+        } else {
+          if(submitBtn) submitBtn.disabled=false;
+          if(submitSpan) submitSpan.textContent="Send message";
+        }
+      })
+      .catch(function(){
+        if(submitBtn) submitBtn.disabled=false;
+        if(submitSpan) submitSpan.textContent="Send message";
+      });
     });
   }
 

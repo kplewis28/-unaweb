@@ -97,7 +97,7 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   transition: background 0.2s, opacity 0.2s;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .una-btn:hover {
@@ -124,7 +124,7 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .una-btn-ghost:hover {
@@ -146,7 +146,7 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   transition: border-color 0.2s, opacity 0.2s;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .una-btn-ghost-dark:hover {
@@ -169,7 +169,7 @@ body {
   text-transform: uppercase;
   cursor: pointer;
   transition: border-color 0.2s;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 .una-btn-danger:hover {
@@ -184,7 +184,7 @@ body {
   font-size: 9px;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  border-radius: 0;
+  border-radius: 20px;
 }
 
 .badge-pending {
@@ -203,6 +203,12 @@ body {
   background: rgba(139, 58, 42, 0.08);
   color: var(--error);
   border: 1px solid rgba(139, 58, 42, 0.25);
+}
+
+/* Application card */
+.una-card {
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 /* Divider */

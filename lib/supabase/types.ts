@@ -36,6 +36,15 @@ export interface Application {
   retreat?: Retreat;
 }
 
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  interest: string | null;
+  message: string | null;
+  created_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {

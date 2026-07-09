@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Application } from "@/lib/supabase/types";
+import type { Application, ContactMessage } from "@/lib/supabase/types";
 import AdminNav from "../AdminNav";
 
 interface ActionResult {
@@ -48,6 +48,7 @@ function ResultIcon({ type }: { type: ActionResult["type"] }) {
 
 interface Props {
   applications: Application[];
+  messages: ContactMessage[];
   userEmail: string;
 }
 
@@ -88,9 +89,14 @@ const value: React.CSSProperties = {
   lineHeight: 1.5,
 };
 
-export default function DashboardClient({ applications, userEmail }: Props) {
+export default function DashboardClient({ applications, messages, userEmail }: Props) {
   const router = useRouter();
+  const [view, setView] = useState<"applications" | "messages">("applications");
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [msgDateFrom, setMsgDateFrom] = useState("");
+  const [msgDateTo, setMsgDateTo] = useState("");
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, ActionResult>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -172,9 +178,14 @@ export default function DashboardClient({ applications, userEmail }: Props) {
     }
   }
 
-  const filtered = filter === "all"
-    ? applications
-    : applications.filter((a) => a.status === filter);
+  const filtered = applications
+    .filter((a) => filter === "all" || a.status === filter)
+    .filter((a) => !dateFrom || a.created_at >= dateFrom)
+    .filter((a) => !dateTo || a.created_at <= `${dateTo}T23:59:59.999Z`);
+
+  const filteredMessages = messages
+    .filter((m) => !msgDateFrom || m.created_at >= msgDateFrom)
+    .filter((m) => !msgDateTo || m.created_at <= `${msgDateTo}T23:59:59.999Z`);
 
   const counts = {
     all: applications.length,
@@ -203,6 +214,24 @@ export default function DashboardClient({ applications, userEmail }: Props) {
         padding: "48px clamp(20px, 4vw, 48px) 100px",
       }}>
 
+        {/* View switcher */}
+        <div style={{ display: "flex", gap: "10px", marginBottom: "28px" }}>
+          <button
+            onClick={() => setView("applications")}
+            className={view === "applications" ? "una-btn" : "una-btn-ghost"}
+          >
+            Applications
+          </button>
+          <button
+            onClick={() => setView("messages")}
+            className={view === "messages" ? "una-btn" : "una-btn-ghost"}
+          >
+            Messages {messages.length > 0 && `(${messages.length})`}
+          </button>
+        </div>
+
+        {view === "applications" && (
+        <>
         {/* Title + stats */}
         <div style={{ marginBottom: "40px" }}>
           <h1 style={{
@@ -222,7 +251,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
 
         {/* Filter tabs */}
         <div style={{
-          display: "flex", gap: 0, marginBottom: "32px",
+          display: "flex", gap: 0, marginBottom: "20px",
           borderBottom: "1px solid var(--sage-muted)",
         }}>
           {(["all", "pending", "approved", "rejected"] as const).map((tab) => (
@@ -246,6 +275,50 @@ export default function DashboardClient({ applications, userEmail }: Props) {
           ))}
         </div>
 
+        {/* Date filter */}
+        <div style={{
+          display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
+          marginBottom: "32px",
+        }}>
+          <div>
+            <label htmlFor="date-from" className="una-input-label">From</label>
+            <input
+              id="date-from"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
+                background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                borderRadius: "8px", padding: "8px 12px", outline: "none",
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="date-to" className="una-input-label">To</label>
+            <input
+              id="date-to"
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
+                background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                borderRadius: "8px", padding: "8px 12px", outline: "none",
+              }}
+            />
+          </div>
+          {(dateFrom || dateTo) && (
+            <button
+              onClick={() => { setDateFrom(""); setDateTo(""); }}
+              className="una-btn-ghost"
+              style={{ padding: "8px 16px" }}
+            >
+              Clear dates
+            </button>
+          )}
+        </div>
+
         {/* Applications list */}
         {filtered.length === 0 ? (
           <p style={{
@@ -255,7 +328,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
             No applications in this category.
           </p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             {filtered.map((app) => {
               const result = results[app.id];
               const isLoading = loadingId === app.id;
@@ -267,7 +340,7 @@ export default function DashboardClient({ applications, userEmail }: Props) {
                 : null;
 
               return (
-                <div key={app.id} style={{ background: "var(--cream)" }}>
+                <div key={app.id} className="una-card" style={{ background: "var(--cream)", border: "1px solid var(--sage-muted)" }}>
 
                   {/* Card header */}
                   <div style={{
@@ -462,6 +535,135 @@ export default function DashboardClient({ applications, userEmail }: Props) {
               );
             })}
           </div>
+        )}
+        </>
+        )}
+
+        {view === "messages" && (
+        <>
+        {/* Title */}
+        <div style={{ marginBottom: "40px" }}>
+          <h1 style={{
+            margin: "0 0 6px",
+            fontFamily: "var(--font-serif)", fontWeight: 400,
+            fontSize: "clamp(30px, 3vw, 42px)", color: "var(--olive)",
+          }}>
+            Contact messages
+          </h1>
+          <p style={{
+            margin: 0, fontFamily: "var(--font-sans)", fontSize: "11px",
+            letterSpacing: "0.08em", color: "var(--sage)",
+          }}>
+            {messages.length} total
+          </p>
+        </div>
+
+        {/* Date filter */}
+        <div style={{
+          display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
+          marginBottom: "32px",
+        }}>
+          <div>
+            <label htmlFor="msg-date-from" className="una-input-label">From</label>
+            <input
+              id="msg-date-from"
+              type="date"
+              value={msgDateFrom}
+              onChange={(e) => setMsgDateFrom(e.target.value)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
+                background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                borderRadius: "8px", padding: "8px 12px", outline: "none",
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="msg-date-to" className="una-input-label">To</label>
+            <input
+              id="msg-date-to"
+              type="date"
+              value={msgDateTo}
+              onChange={(e) => setMsgDateTo(e.target.value)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
+                background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                borderRadius: "8px", padding: "8px 12px", outline: "none",
+              }}
+            />
+          </div>
+          {(msgDateFrom || msgDateTo) && (
+            <button
+              onClick={() => { setMsgDateFrom(""); setMsgDateTo(""); }}
+              className="una-btn-ghost"
+              style={{ padding: "8px 16px" }}
+            >
+              Clear dates
+            </button>
+          )}
+        </div>
+
+        {/* Messages list */}
+        {filteredMessages.length === 0 ? (
+          <p style={{
+            textAlign: "center", fontFamily: "var(--font-serif)",
+            fontSize: "20px", color: "var(--sage)", padding: "80px 0",
+          }}>
+            No contact messages{messages.length === 0 ? " yet" : " in this range"}.
+          </p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            {filteredMessages.map((msg) => (
+              <div key={msg.id} className="una-card" style={{
+                background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                padding: "clamp(20px, 2.5vw, 28px) clamp(20px, 3vw, 32px)",
+              }}>
+                <div style={{
+                  display: "flex", alignItems: "flex-start",
+                  justifyContent: "space-between", flexWrap: "wrap", gap: "16px",
+                  marginBottom: "12px",
+                }}>
+                  <div>
+                    <h2 style={{
+                      margin: "0 0 3px", fontFamily: "var(--font-serif)",
+                      fontWeight: 400, fontSize: "20px", color: "var(--olive)",
+                    }}>
+                      {msg.name}
+                    </h2>
+                    <p style={{
+                      margin: 0, fontFamily: "var(--font-sans)",
+                      fontSize: "12px", color: "var(--ink-soft)",
+                    }}>
+                      {msg.email}
+                    </p>
+                  </div>
+                  <p style={{
+                    margin: 0, fontFamily: "var(--font-sans)", fontSize: "11px",
+                    color: "var(--sage)", letterSpacing: "0.04em", whiteSpace: "nowrap",
+                  }}>
+                    {new Date(msg.created_at).toLocaleDateString("es-ES", {
+                      day: "numeric", month: "short", year: "numeric",
+                    })}
+                  </p>
+                </div>
+
+                {msg.interest && (
+                  <div style={{ marginBottom: "10px" }}>
+                    <span style={label}>Writing about</span>
+                    <p style={{ ...value, fontSize: "15px", margin: 0 }}>{msg.interest}</p>
+                  </div>
+                )}
+
+                {msg.message && (
+                  <div>
+                    <span style={label}>Message</span>
+                    <p style={{ ...value, maxWidth: "680px" }}>{msg.message}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        </>
         )}
       </main>
     </div>

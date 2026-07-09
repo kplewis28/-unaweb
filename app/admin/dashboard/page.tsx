@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Application } from "@/lib/supabase/types";
+import type { Application, ContactMessage } from "@/lib/supabase/types";
 import DashboardClient from "./DashboardClient";
 import { MOCK_APPLICATIONS } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
@@ -9,6 +9,7 @@ const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC
 
 export default async function DashboardPage() {
   let applications: Application[] = [];
+  let messages: ContactMessage[] = [];
   let userEmail = process.env.ADMIN_EMAIL ?? "admin@una.eco";
 
   if (IS_MOCK) {
@@ -18,7 +19,7 @@ export default async function DashboardPage() {
       redirect("/admin/login");
     }
     applications = MOCK_APPLICATIONS;
-    return <DashboardClient applications={applications} userEmail={userEmail} />;
+    return <DashboardClient applications={applications} messages={messages} userEmail={userEmail} />;
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -36,18 +37,26 @@ export default async function DashboardPage() {
   const host = headersList.get("host");
   const protocol = headersList.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
   const cookieHeader = headersList.get("cookie") ?? "";
+  const fetchOpts = { headers: { cookie: cookieHeader }, cache: "no-store" as const };
 
-  const res = await fetch(`${protocol}://${host}/api/admin/applications`, {
-    headers: { cookie: cookieHeader },
-    cache: "no-store",
-  });
+  const [appsRes, messagesRes] = await Promise.all([
+    fetch(`${protocol}://${host}/api/admin/applications`, fetchOpts),
+    fetch(`${protocol}://${host}/api/admin/contact-messages`, fetchOpts),
+  ]);
 
-  if (!res.ok) {
-    console.error("Dashboard fetch error:", await res.text());
+  if (!appsRes.ok) {
+    console.error("Dashboard applications fetch error:", await appsRes.text());
   } else {
-    const json = await res.json();
+    const json = await appsRes.json();
     applications = (json.applications as Application[]) ?? [];
   }
 
-  return <DashboardClient applications={applications} userEmail={userEmail} />;
+  if (!messagesRes.ok) {
+    console.error("Dashboard messages fetch error:", await messagesRes.text());
+  } else {
+    const json = await messagesRes.json();
+    messages = (json.messages as ContactMessage[]) ?? [];
+  }
+
+  return <DashboardClient applications={applications} messages={messages} userEmail={userEmail} />;
 }
