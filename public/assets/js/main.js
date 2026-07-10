@@ -237,6 +237,22 @@
     });
   })();
 
+  /* -------- HERO EXPAND TOGGLE (mobile only) -------- */
+  (function(){
+    var btn = document.getElementById('hero-expand');
+    var vid = document.querySelector('.hero-vid');
+    if(!btn || !vid) return;
+    var iconOpen  = btn.querySelector('.icon-expand-open');
+    var iconClose = btn.querySelector('.icon-expand-close');
+    var label     = btn.querySelector('.hero-expand-label');
+    btn.addEventListener('click', function(){
+      var expanded = vid.classList.toggle('expanded');
+      iconOpen.style.display  = expanded ? 'none'  : 'block';
+      iconClose.style.display = expanded ? 'block' : 'none';
+      if(label) label.textContent = expanded ? 'Compact' : 'Full video';
+    });
+  })();
+
   /* -------- REGISTRATION MODAL -------- */
   (function(){
     var modal=document.getElementById("reg-modal");

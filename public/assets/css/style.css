@@ -481,12 +481,12 @@ img { max-width: 100%; display: block; }
 
 /* ---- HERO SOUND ---- */
 .hero-sound-wrap {
-  display: flex; justify-content: center;
+  display: flex; justify-content: center; gap: 10px;
   padding-top: clamp(4px,0.6vh,8px);
   position: relative; z-index: 2;
   opacity: 0; animation: logoIn 1s cubic-bezier(.2,.7,.2,1) .6s forwards;
 }
-.hero-sound {
+.hero-sound, .hero-expand {
   display: inline-flex; align-items: center; gap: 9px;
   background: transparent; border: 1px solid rgba(239,236,223,.35);
   border-radius: 20px; padding: 7px 14px 7px 10px;
@@ -494,9 +494,12 @@ img { max-width: 100%; display: block; }
   font-family: var(--sans); font-size: 10px; letter-spacing: .32em; text-transform: uppercase;
   transition: border-color .3s;
 }
-.hero-sound:hover { border-color: rgba(239,236,223,.75); }
-.hero-sound svg { width: 14px; height: 14px; display: block; flex-shrink: 0; }
-.hero-sound-label { line-height: 1; }
+.hero-sound:hover, .hero-expand:hover { border-color: rgba(239,236,223,.75); }
+.hero-sound svg, .hero-expand svg { width: 14px; height: 14px; display: block; flex-shrink: 0; }
+.hero-sound-label, .hero-expand-label { line-height: 1; }
+/* Only offered on mobile — see the "expand full video" media query block
+   below for where this becomes visible and does anything. */
+.hero-expand { display: none; }
 
 /* ---- HERO CTA ---- */
 .hero-cta {
@@ -639,6 +642,13 @@ img { max-width: 100%; display: block; }
 
   .hero { padding: 60px 18px 70px; }
   .hero-photo { width: 72vw; }
+  .hero-cta .eyebrow { text-align: center; }
+
+  /* Let mobile viewers optionally see the full video frame (with its
+     on-screen text) instead of the edge-to-edge crop, without changing
+     the default look. */
+  .hero-expand { display: inline-flex; }
+  .hero-vid.expanded { object-fit: contain; background: #060606; }
 
   .mission { padding: 60px 22px 70px; }
 
