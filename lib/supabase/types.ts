@@ -1,4 +1,4 @@
-export type ApplicationStatus = "pending" | "approved" | "rejected";
+export type ApplicationStatus = "pending" | "approved" | "rejected" | "paid";
 
 export interface Retreat {
   id: string;
@@ -8,12 +8,11 @@ export interface Retreat {
   location: string | null;
   start_date: string | null;
   end_date: string | null;
-  capacity: number;
-  price: number;
+  total_spots: number;
+  price_cents: number;
   currency: string;
-  is_active: boolean;
+  is_open: boolean;
   created_at: string;
-  updated_at: string;
 }
 
 export interface Application {
@@ -26,6 +25,7 @@ export interface Application {
   why_attend: string | null;
   how_heard: string | null;
   social_media: string | null;
+  num_attendees: number;
   status: ApplicationStatus;
   access_code: string | null;
   access_code_expires_at: string | null;

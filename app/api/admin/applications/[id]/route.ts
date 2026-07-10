@@ -20,6 +20,9 @@ async function sendApprovalAndRespond(application: Application, accessCode: stri
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
   const paymentUrl = `${baseUrl}/pagar?code=${accessCode}`;
 
+  const numAttendees = Math.max(1, application.num_attendees ?? 1);
+  const unitPrice = (application.retreat?.price_cents ?? 0) / 100;
+
   const emailResult = await sendApprovalEmail({
     toName: application.name,
     toEmail: application.email,
@@ -27,6 +30,9 @@ async function sendApprovalAndRespond(application: Application, accessCode: stri
     accessCode,
     expiresAt,
     paymentUrl,
+    numAttendees,
+    totalPrice: unitPrice * numAttendees,
+    currency: application.retreat?.currency,
   });
 
   if (!emailResult.success) {
@@ -45,7 +51,7 @@ export async function PATCH(
   const body = await request.json();
   const { action } = body;
 
-  if (action !== "approve" && action !== "reject") {
+  if (action !== "approve" && action !== "reject" && action !== "cancel") {
     return NextResponse.json({ error: "Invalid action." }, { status: 400 });
   }
 
@@ -60,6 +66,16 @@ export async function PATCH(
     if (!application) {
       return NextResponse.json({ error: "Application not found." }, { status: 404 });
     }
+
+    if (action === "cancel") {
+      if (application.status !== "approved") {
+        return NextResponse.json({ error: "Only approved applications can be cancelled." }, { status: 409 });
+      }
+      application.status = "pending";
+      application.updated_at = new Date().toISOString();
+      return NextResponse.json({ ok: true, name: application.name, status: "cancelled" });
+    }
+
     if (application.status !== "pending") {
       return NextResponse.json({ error: "Application already processed." }, { status: 409 });
     }
@@ -126,6 +142,38 @@ export async function PATCH(
 
   const application = { ...applicationRow, retreat } as Application;
 
+  if (action === "cancel") {
+    if (application.status !== "approved") {
+      return NextResponse.json(
+        { error: "Only approved applications (not yet paid) can be cancelled." },
+        { status: 409 }
+      );
+    }
+
+    const { createServiceClient } = await import("@/lib/supabase/server");
+    const serviceClient = await createServiceClient();
+
+    const { error: cancelError } = await serviceClient
+      .from("applications")
+      .update({ status: "pending", updated_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (cancelError) {
+      console.error("[PATCH /api/admin/applications] cancel error:", cancelError);
+      return NextResponse.json({ error: "Failed to cancel approval." }, { status: 500 });
+    }
+
+    // Mark the associated access code(s) as expired — best-effort, does not
+    // block the cancellation if no row exists yet for older applications.
+    await serviceClient
+      .from("access_codes")
+      .update({ status: "expired" })
+      .eq("application_id", id)
+      .eq("status", "active");
+
+    return NextResponse.json({ ok: true, name: application.name, status: "cancelled" });
+  }
+
   if (application.status !== "pending") {
     return NextResponse.json({ error: "Application already processed." }, { status: 409 });
   }
@@ -162,6 +210,21 @@ export async function PATCH(
   if (updateError) {
     console.error("[PATCH /api/admin/applications] approve error:", updateError);
     return NextResponse.json({ error: "Failed to approve application." }, { status: 500 });
+  }
+
+  if (application.retreat_id) {
+    const { createServiceClient } = await import("@/lib/supabase/server");
+    const serviceClient = await createServiceClient();
+    const { error: accessCodeError } = await serviceClient.from("access_codes").insert({
+      code: accessCode,
+      application_id: id,
+      retreat_id: application.retreat_id,
+      status: "active",
+      expires_at: expiresAt.toISOString(),
+    });
+    if (accessCodeError) {
+      console.error("[PATCH /api/admin/applications] access_codes insert error:", accessCodeError);
+    }
   }
 
   // Send approval email (non-blocking — failure does NOT revert approval)

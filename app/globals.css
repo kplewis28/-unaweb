@@ -205,6 +205,12 @@ body {
   border: 1px solid rgba(139, 58, 42, 0.25);
 }
 
+.badge-paid {
+  background: rgba(71, 62, 15, 0.08);
+  color: var(--olive);
+  border: 1px solid rgba(71, 62, 15, 0.25);
+}
+
 /* Application card */
 .una-card {
   border-radius: 12px;

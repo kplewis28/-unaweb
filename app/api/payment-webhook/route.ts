@@ -20,8 +20,14 @@ export async function POST(request: NextRequest) {
     const supabase = await createServiceClient();
     await supabase
       .from("applications")
-      .update({ status: "approved" })
+      .update({ status: "paid", paid_at: new Date().toISOString() })
       .eq("id", event.applicationId);
+
+    await supabase
+      .from("access_codes")
+      .update({ status: "used", used_at: new Date().toISOString() })
+      .eq("application_id", event.applicationId)
+      .eq("status", "active");
   }
 
   return NextResponse.json({ received: true });

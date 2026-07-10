@@ -20,6 +20,7 @@ export default function ApplicationForm({ retreat }: Props) {
     why_attend: "",
     how_heard: "",
     social_media: "",
+    num_attendees: "1",
   });
 
   function set(field: string) {
@@ -39,7 +40,11 @@ export default function ApplicationForm({ retreat }: Props) {
       const res = await fetch("/api/applications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, retreat_id: retreat.id }),
+        body: JSON.stringify({
+          ...form,
+          retreat_id: retreat.id,
+          num_attendees: Math.max(1, Number(form.num_attendees) || 1),
+        }),
       });
 
       if (!res.ok) {
@@ -345,6 +350,22 @@ export default function ApplicationForm({ retreat }: Props) {
                 onChange={set("social_media")}
                 className="una-input"
                 placeholder="@usuario"
+              />
+            </div>
+
+            {/* Num attendees */}
+            <div>
+              <label htmlFor="num_attendees" className="una-input-label">
+                ¿Cuántas personas vendrán contigo?
+              </label>
+              <input
+                id="num_attendees"
+                type="number"
+                min={1}
+                step={1}
+                value={form.num_attendees}
+                onChange={set("num_attendees")}
+                className="una-input"
               />
             </div>
           </div>

@@ -1,31 +1,20 @@
 import { Resend } from "resend";
 
-interface ApprovalEmailParams {
+interface PaymentReminderEmailParams {
   toName: string;
   toEmail: string;
   retreatName: string;
   accessCode: string;
   expiresAt: Date;
+  hoursRemaining: number;
   paymentUrl: string;
-  numAttendees?: number;
-  totalPrice?: number;
-  currency?: string;
 }
 
-export async function sendApprovalEmail(
-  params: ApprovalEmailParams
+export async function sendPaymentReminderEmail(
+  params: PaymentReminderEmailParams
 ): Promise<{ success: boolean; error?: string }> {
-  const {
-    toName,
-    toEmail,
-    retreatName,
-    accessCode,
-    expiresAt,
-    paymentUrl,
-    numAttendees,
-    totalPrice,
-    currency,
-  } = params;
+  const { toName, toEmail, retreatName, accessCode, expiresAt, hoursRemaining, paymentUrl } =
+    params;
 
   const expiresFormatted = expiresAt.toLocaleDateString("en-US", {
     day: "numeric",
@@ -34,14 +23,6 @@ export async function sendApprovalEmail(
   });
 
   const firstName = toName.split(" ")[0];
-
-  const groupNote =
-    numAttendees && numAttendees > 1 && totalPrice !== undefined
-      ? `<p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#2a2a2a;line-height:1.55;">
-           Your registration is for <strong>${numAttendees} people</strong>, the total amount is
-           <strong>$${totalPrice.toFixed(2)} ${currency ?? "USD"}</strong>.
-         </p>`
-      : "";
 
   const html = `
 <!DOCTYPE html>
@@ -76,14 +57,13 @@ export async function sendApprovalEmail(
           <tr>
             <td style="padding-bottom:28px;">
               <h1 style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:34px;font-weight:400;color:#473e0f;line-height:1.15;">
-                ${firstName},<br/>you've been selected.
+                ${firstName}, your spot is waiting.
               </h1>
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#2a2a2a;line-height:1.55;">
-                We're delighted to let you know that your application for
-                <em>${retreatName}</em> has been reviewed and approved.
-                We would love to have you join us for this gathering.
+                You already have an approved spot for <em>${retreatName}</em>,
+                but we noticed you haven't completed your payment yet.
+                Your access code is still valid for <strong>${hoursRemaining} hour${hoursRemaining === 1 ? "" : "s"}</strong>.
               </p>
-              ${groupNote}
             </td>
           </tr>
 
@@ -112,15 +92,14 @@ export async function sendApprovalEmail(
           <tr>
             <td style="padding-bottom:32px;">
               <p style="margin:0 0 20px;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#2a2a2a;line-height:1.55;">
-                To confirm your spot, enter the code on our payment page.
-                Your code will already be pre-filled at the link below:
+                Complete your payment now to secure your spot before the code expires:
               </p>
               <table cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="background:#473e0f;border-radius:8px;">
                     <a href="${paymentUrl}"
                       style="display:inline-block;padding:14px 36px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:#efecdf;text-decoration:none;border-radius:8px;">
-                      Confirm my spot
+                      Complete my payment
                     </a>
                   </td>
                 </tr>
@@ -133,7 +112,6 @@ export async function sendApprovalEmail(
             <td style="padding-bottom:40px;">
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#6b6730;line-height:1.6;">
                 If you have any questions, just reply to this email and we'll be happy to help.
-                We're so glad you've chosen to share this space with us.
               </p>
             </td>
           </tr>
@@ -149,7 +127,7 @@ export async function sendApprovalEmail(
           <tr>
             <td style="text-align:center;">
               <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#abaa70;">
-                ÚNA · una.eco
+                una.eco
               </p>
             </td>
           </tr>
@@ -167,17 +145,17 @@ export async function sendApprovalEmail(
     const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
       to: toEmail,
-      subject: `Your spot in ${retreatName} — ÚNA`,
+      subject: `Reminder: complete your payment for ${retreatName} — ÚNA`,
       html,
     });
     if (error) {
-      console.error("[send-approval-email]", error.message);
+      console.error("[send-payment-reminder-email]", error.message);
       return { success: false, error: error.message };
     }
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("[send-approval-email]", message);
+    console.error("[send-payment-reminder-email]", message);
     return { success: false, error: message };
   }
 }

@@ -12,9 +12,13 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createServiceClient();
 
+    // Fetch application, then its retreat separately: the applications ->
+    // retreats foreign key isn't registered in PostgREST's schema cache, so
+    // the embedded-relationship select ("*, retreat:retreats(*)") fails
+    // with PGRST200.
     const { data: application } = await supabase
       .from("applications")
-      .select("*, retreat:retreats(*)")
+      .select("*")
       .eq("access_code", accessCode.trim().toUpperCase())
       .eq("status", "approved")
       .single();
@@ -33,14 +37,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    let retreat = null;
+    if (application.retreat_id) {
+      const { data: retreatRow } = await supabase
+        .from("retreats")
+        .select("*")
+        .eq("id", application.retreat_id)
+        .single();
+      retreat = retreatRow ?? null;
+    }
+
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
-    const retreat = application.retreat;
+    const numAttendees = Math.max(1, application.num_attendees ?? 1);
+    // retreat.price_cents is in cents; the payment adapter expects a major
+    // currency unit (it multiplies by 100 itself before sending to Stripe).
+    const unitPrice = (retreat?.price_cents ?? 0) / 100;
+    const totalPrice = unitPrice * numAttendees;
 
     const adapter = getPaymentAdapter();
     const result = await adapter.createCheckout({
       applicationId: application.id,
       retreatName: retreat?.name ?? "ÚNA Retreat",
-      price: retreat?.price ?? 0,
+      price: totalPrice,
       currency: retreat?.currency ?? "USD",
       customerEmail: application.email,
       customerName: application.name,

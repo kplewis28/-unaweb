@@ -56,12 +56,14 @@ const STATUS_LABELS: Record<string, string> = {
   pending: "Pending",
   approved: "Approved",
   rejected: "Rejected",
+  paid: "Paid",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
   pending: "badge badge-pending",
   approved: "badge badge-approved",
   rejected: "badge badge-rejected",
+  paid: "badge badge-paid",
 };
 
 const HOW_HEARD_LABELS: Record<string, string> = {
@@ -92,7 +94,7 @@ const value: React.CSSProperties = {
 export default function DashboardClient({ applications, messages, userEmail }: Props) {
   const router = useRouter();
   const [view, setView] = useState<"applications" | "messages">("applications");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "paid">("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [msgDateFrom, setMsgDateFrom] = useState("");
@@ -119,7 +121,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
     router.push("/admin/login");
   }
 
-  async function handleAction(id: string, action: "approve" | "reject") {
+  async function handleAction(id: string, action: "approve" | "reject" | "cancel") {
     setLoadingId(id);
     try {
       const res = await fetch(`/api/admin/applications/${id}`, {
@@ -156,6 +158,15 @@ export default function DashboardClient({ applications, messages, userEmail }: P
             },
           }));
         }
+      } else if (action === "cancel") {
+        setResults((prev) => ({
+          ...prev,
+          [id]: {
+            applicationId: id,
+            type: "success",
+            message: `Approval cancelled for ${data.name}. Their access code was expired and the application moved back to pending.`,
+          },
+        }));
       } else {
         setResults((prev) => ({
           ...prev,
@@ -192,6 +203,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
     pending: applications.filter((a) => a.status === "pending").length,
     approved: applications.filter((a) => a.status === "approved").length,
     rejected: applications.filter((a) => a.status === "rejected").length,
+    paid: applications.filter((a) => a.status === "paid").length,
   };
 
   return (
@@ -245,7 +257,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
             margin: 0, fontFamily: "var(--font-sans)", fontSize: "11px",
             letterSpacing: "0.08em", color: "var(--sage)",
           }}>
-            {counts.all} total · {counts.pending} pending · {counts.approved} approved · {counts.rejected} rejected
+            {counts.all} total · {counts.pending} pending · {counts.approved} approved · {counts.paid} paid · {counts.rejected} rejected
           </p>
         </div>
 
@@ -254,7 +266,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           display: "flex", gap: 0, marginBottom: "20px",
           borderBottom: "1px solid var(--sage-muted)",
         }}>
-          {(["all", "pending", "approved", "rejected"] as const).map((tab) => (
+          {(["all", "pending", "approved", "paid", "rejected"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
@@ -431,6 +443,14 @@ export default function DashboardClient({ applications, messages, userEmail }: P
                               Email not sent
                             </p>
                           )}
+                          <button
+                            disabled={isLoading}
+                            onClick={() => handleAction(app.id, "cancel")}
+                            className="una-btn-danger"
+                            style={{ marginTop: "10px" }}
+                          >
+                            {isLoading ? "…" : "Cancel approval"}
+                          </button>
                         </div>
                       )}
 
