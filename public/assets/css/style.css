@@ -639,6 +639,11 @@ img { max-width: 100%; display: block; }
 
   .hero { padding: 60px 18px 70px; }
   .hero-photo { width: 72vw; }
+  /* The video carries on-screen text at various points in the frame;
+     "cover" on a tall mobile viewport crops the sides and can hide it,
+     so show the full frame instead, letterboxed against the dark hero
+     background. */
+  .hero-vid { object-fit: contain; background: #060606; }
 
   .mission { padding: 60px 22px 70px; }
 
