@@ -202,11 +202,10 @@ img { max-width: 100%; display: block; }
   padding: clamp(70px,10vh,130px) clamp(22px,5vw,72px) clamp(90px,14vh,160px);
 }
 .exp-grid {
-  max-width: 1080px; margin: 0 auto; display: grid;
-  grid-template-columns: repeat(12,1fr);
-  grid-template-rows: auto auto;
-  gap: clamp(48px,7vh,80px) clamp(40px,5vw,70px);
+  max-width: 1080px; margin: 0 auto; display: flex; align-items: flex-start;
+  gap: clamp(40px,5vw,70px);
 }
+.exp-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: clamp(48px,7vh,80px); }
 .exp-block .eyebrow { color: var(--olive); font-size: 11px; letter-spacing: .38em; }
 .exp-block h3 {
   font-family: var(--sans); font-weight: 500; text-transform: uppercase;
@@ -215,10 +214,6 @@ img { max-width: 100%; display: block; }
 }
 .exp-block .body { font-family: var(--serif); font-size: 1.08rem; line-height: 1.4; color: var(--olive); }
 .exp-block .body p + p { margin-top: 18px; }
-.exp-why { grid-area: 1/1/2/span 6; align-self: start; }
-.exp-immersion { grid-area: 1/7/2/span 6; align-self: start; }
-.exp-who { grid-area: 2/1/3/span 6; align-self: start; }
-.exp-roots { grid-area: 2/7/3/span 6; align-self: start; }
 
 /* ---- CYCLE ---- */
 .cycle {
@@ -701,8 +696,8 @@ img { max-width: 100%; display: block; }
   .letter-text p { text-indent: 0; }
 
   .experience { padding: 80px 22px 90px; }
-  .exp-grid { grid-template-columns: 1fr; row-gap: 54px; }
-  .exp-why, .exp-immersion, .exp-who, .exp-roots { grid-area: auto/1; align-self: auto; }
+  .exp-grid { flex-direction: column; gap: 54px; }
+  .exp-col { gap: 54px; }
 
   .cycle { padding: 80px 22px 90px; }
   .stage-grid { grid-template-columns: 1fr; grid-template-rows: none; }
