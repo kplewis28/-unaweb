@@ -323,13 +323,36 @@
         investment_comfort:"Please select an option."
       };
 
+      // Format checks are done with our own RegExp.test() rather than the
+      // HTML `pattern` attribute — in testing, the browser's native pattern
+      // matching gave incorrect results for anything beyond trivial regexes
+      // (e.g. silently passed values that shouldn't match), so we can't
+      // trust element.validity.patternMismatch here.
+      var CUSTOM_VALIDATORS={
+        linkedin:{
+          test:/^(https?:\/\/)?([\w-]+\.)+[a-zA-Z]{2,}(\/\S*)?$/,
+          message:"Please enter a valid link, e.g. linkedin.com/in/yourname."
+        },
+        phone_number:{
+          test:/^[0-9\s-]{5,15}$/,
+          message:"Please enter a valid phone number (digits only)."
+        }
+      };
+
       function messageForField(field){
         var v=field.validity;
         if(v.valueMissing) return REQUIRED_MESSAGES[field.name]||"Please complete this field to continue.";
         if(v.typeMismatch && field.type==="email") return "Please enter a valid email address (e.g. name@example.com).";
-        if(v.typeMismatch && field.type==="url") return "Please enter a valid URL starting with https://.";
-        if(v.patternMismatch && field.name==="phone_number") return "Please enter a valid phone number (digits only).";
+        var custom=CUSTOM_VALIDATORS[field.name];
+        if(custom && field.value.trim() && !custom.test.test(field.value.trim())) return custom.message;
         return "Please check this field before continuing.";
+      }
+
+      function isFieldValid(field){
+        if(!field.checkValidity()) return false;
+        var custom=CUSTOM_VALIDATORS[field.name];
+        if(custom && field.value.trim() && !custom.test.test(field.value.trim())) return false;
+        return true;
       }
 
       function errorAnchor(field){
@@ -368,7 +391,7 @@
         var fields=Array.prototype.slice.call(step.querySelectorAll("input,select,textarea"));
         var firstInvalid=null;
         fields.forEach(function(field){
-          if(field.checkValidity()){
+          if(isFieldValid(field)){
             clearFieldError(field);
           } else {
             setFieldError(field, messageForField(field));
@@ -380,11 +403,11 @@
 
       regForm.addEventListener("input", function(e){
         var field=e.target;
-        if(field.matches && field.matches("input,select,textarea") && field.checkValidity()) clearFieldError(field);
+        if(field.matches && field.matches("input,select,textarea") && isFieldValid(field)) clearFieldError(field);
       });
       regForm.addEventListener("change", function(e){
         var field=e.target;
-        if(field.matches && field.matches("input,select,textarea") && field.checkValidity()) clearFieldError(field);
+        if(field.matches && field.matches("input,select,textarea") && isFieldValid(field)) clearFieldError(field);
       });
 
       function goToStep(n){
@@ -441,6 +464,7 @@
         var name=regForm.querySelector('[name="name"]').value.trim();
         var email=regForm.querySelector('[name="email"]').value.trim();
         var linkedin=regForm.querySelector('[name="linkedin"]').value.trim();
+        if(linkedin && !/^https?:\/\//i.test(linkedin)) linkedin="https://"+linkedin;
         var phoneCode=regForm.querySelector('[name="phone_code"]').value||"";
         var phoneNumber=(regForm.querySelector('[name="phone_number"]').value||"").trim();
         var submitSpan=submitBtn ? submitBtn.querySelector("span") : null;
