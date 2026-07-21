@@ -181,9 +181,9 @@ img { max-width: 100%; display: block; }
   filter: grayscale(1) contrast(1.05);
 }
 .letter-text {
-  display: flex; flex-direction: column; gap: clamp(20px,3vh,32px);
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(30px,5vw,70px);
   font-family: var(--serif); font-size: clamp(1.05rem,1.4vw,1.18rem);
-  line-height: 1.6; color: var(--bone); max-width: 640px; margin: 0 auto;
+  line-height: 1.5; color: var(--bone); max-width: 760px; margin: 0 auto;
 }
 .letter-text p { text-indent: 1.8em; }
 .letter-continued {
@@ -698,6 +698,7 @@ img { max-width: 100%; display: block; }
   .home-letter { padding: 80px 22px 90px; }
   .letter-title { font-size: clamp(2rem,9vw,2.8rem); }
   .letter-image { max-width: none; aspect-ratio: 16/10; margin: 30px 0; }
+  .letter-text { grid-template-columns: 1fr; gap: 22px; }
   .letter-text p { text-indent: 0; }
 
   .experience { padding: 80px 22px 90px; }
