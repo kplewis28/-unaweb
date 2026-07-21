@@ -71,7 +71,7 @@
         </button>
       </div>
       <div class="hero-cta">
-        <span class="eyebrow">Next Gathering · Sierra Nevada · Colombia · 23-27 November 2026</span>
+        <span class="eyebrow">Next Gathering · 23-27 November 2026</span>
         <button class="hero-register-btn" id="open-register" type="button">
           <span>Join Us</span>
           <svg viewBox="0 0 30 10" aria-hidden="true">
@@ -384,84 +384,122 @@
       <span class="bar"></span>
     </button>
     <div class="reg-inner">
-      <span class="eyebrow">Next Gathering · Sierra Nevada · Colombia · 23-27 November 2026</span>
+      <span class="eyebrow">Next Gathering · 23-27 November 2026</span>
       <h2 class="reg-title" id="reg-title">Apply to <em>attend</em></h2>
-      <div class="reg-desc">
+      <div class="reg-desc" id="reg-intro">
         <p>Thank you for your interest in joining us for our next gathering in La Sierra Nevada de Santa Marta, Colombia. These gatherings are intentionally intimate. Their value lies not in exclusivity, but in the depth of the experience, years of trust and relationship that make them possible. Your investment helps sustain that ecosystem while supporting Indigenous-led initiatives that continue long after the gathering ends.</p>
         <p>Please complete the short form below as openly and honestly as possible. All information you share will be used solely for internal purposes and treated with care and confidentiality.</p>
       </div>
+      <div class="reg-progress" id="reg-progress">
+        <span class="reg-progress-label">Step <span id="reg-step-current">1</span> of <span id="reg-step-total">9</span></span>
+        <div class="reg-progress-track"><div class="reg-progress-fill" id="reg-progress-fill"></div></div>
+      </div>
       <form class="contact-form" id="reg-form" novalidate>
-        <div class="form-row">
-          <label><span class="label">Full name</span><input type="text" name="name" required /></label>
-          <label><span class="label">Email</span><input type="email" name="email" required /></label>
+        <div class="reg-step" data-step="1">
+          <div class="form-row">
+            <label><span class="label">Full name</span><input type="text" name="name" required /></label>
+            <label><span class="label">Email</span><input type="email" name="email" required /></label>
+          </div>
         </div>
-        <div class="form-row">
-          <label><span class="label">Country of residence</span><input type="text" name="country" required /></label>
-          <label><span class="label">Title / Organisation</span><input type="text" name="profession" /></label>
+        <div class="reg-step" data-step="2" hidden>
+          <div class="form-row">
+            <label><span class="label">Country of residence</span><input type="text" name="country" required /></label>
+            <label><span class="label">Title / Organisation</span><input type="text" name="profession" /></label>
+          </div>
         </div>
-        <div class="form-row">
-          <label><span class="label">LinkedIn / Website</span><input type="text" name="linkedin" placeholder="https://" required /></label>
-          <label><span class="label">Mobile / WhatsApp (including country code)</span><input type="tel" name="phone" placeholder="+1 555 555 5555" /></label>
+        <div class="reg-step" data-step="3" hidden>
+          <div class="form-row">
+            <label><span class="label">LinkedIn / Website</span><input type="text" name="linkedin" placeholder="https://" required /></label>
+            <label><span class="label">Mobile / WhatsApp (including country code)</span><input type="tel" name="phone" placeholder="+1 555 555 5555" /></label>
+          </div>
         </div>
-        <label>
-          <span class="label">How did you hear about ÚNA?</span>
-          <select name="source">
-            <option value="">Select one</option>
-            <option value="instagram">Instagram</option>
-            <option value="referido">A friend or acquaintance</option>
-            <option value="boca-a-boca">Word of mouth</option>
-            <option value="evento">At an event</option>
-            <option value="otro">Other</option>
-          </select>
-        </label>
-        <label>
-          <span class="label">What draws you to this gathering at this moment in your life or leadership journey?</span>
-          <textarea name="q_draw" rows="4" maxlength="500"></textarea>
-          <span class="field-hint">Max 500 characters</span>
-        </label>
-        <label>
-          <span class="label">How does your current, past, or aspirational work intersect with Indigenous knowledge, climate, culture, systems change, or creating positive impact?</span>
-          <textarea name="q_work_intersection" rows="4" maxlength="500"></textarea>
-          <span class="field-hint">Max 500 characters</span>
-        </label>
-        <label>
-          <span class="label">This convening centers Indigenous spiritual and ecological leadership. What does responsible participation in such a space mean to you?</span>
-          <textarea name="q_responsible_participation" rows="4" maxlength="500"></textarea>
-          <span class="field-hint">Max 500 characters</span>
-        </label>
-        <label>
-          <span class="label">Are you connected to an organisation, foundation, or company/brand interested in supporting Indigenous-led initiatives?</span>
-          <select name="org_connection">
-            <option value="">Select one</option>
-            <option value="yes">Yes</option>
-            <option value="potentially">Potentially</option>
-            <option value="not-at-this-time">Not at this time</option>
-          </select>
-        </label>
-        <label>
-          <span class="label">Are you available to travel to Santa Marta, Colombia for the gathering dates? 23-27 November 2026</span>
-          <select name="travel_availability">
-            <option value="">Select one</option>
-            <option value="yes">Yes</option>
-            <option value="need-details">I need further details</option>
-          </select>
-        </label>
-        <label>
-          <span class="label">Investment</span>
-          <p class="field-note">The participation fee includes a direct contribution to community infrastructure, all meals, and the complete program (excluding flights to and from Santa Marta, Colombia). Investment starts at USD $5,500, depending on accommodation selection.</p>
-          <select name="investment_comfort">
-            <option value="">Select one</option>
-            <option value="accessible">This investment feels accessible to me.</option>
-            <option value="discuss">I'd like to discuss payment plans or financial support.</option>
-          </select>
-        </label>
+        <div class="reg-step" data-step="4" hidden>
+          <label>
+            <span class="label">How did you hear about ÚNA?</span>
+            <select name="source">
+              <option value="">Select one</option>
+              <option value="instagram">Instagram</option>
+              <option value="referido">A friend or acquaintance</option>
+              <option value="boca-a-boca">Word of mouth</option>
+              <option value="evento">At an event</option>
+              <option value="otro">Other</option>
+            </select>
+          </label>
+        </div>
+        <div class="reg-step" data-step="5" hidden>
+          <label>
+            <span class="label">What draws you to this gathering at this moment in your life or leadership journey?</span>
+            <textarea name="q_draw" rows="4" maxlength="500"></textarea>
+            <span class="field-hint">Max 500 characters</span>
+          </label>
+        </div>
+        <div class="reg-step" data-step="6" hidden>
+          <label>
+            <span class="label">How does your current, past, or aspirational work intersect with Indigenous knowledge, climate, culture, systems change, or creating positive impact?</span>
+            <textarea name="q_work_intersection" rows="4" maxlength="500"></textarea>
+            <span class="field-hint">Max 500 characters</span>
+          </label>
+        </div>
+        <div class="reg-step" data-step="7" hidden>
+          <label>
+            <span class="label">This convening centers Indigenous spiritual and ecological leadership. What does responsible participation in such a space mean to you?</span>
+            <textarea name="q_responsible_participation" rows="4" maxlength="500"></textarea>
+            <span class="field-hint">Max 500 characters</span>
+          </label>
+        </div>
+        <div class="reg-step" data-step="8" hidden>
+          <label>
+            <span class="label">Are you connected to an organisation, foundation, or company/brand interested in supporting Indigenous-led initiatives?</span>
+            <select name="org_connection">
+              <option value="">Select one</option>
+              <option value="yes">Yes</option>
+              <option value="potentially">Potentially</option>
+              <option value="not-at-this-time">Not at this time</option>
+            </select>
+          </label>
+          <label>
+            <span class="label">Are you available to travel to Santa Marta, Colombia for the gathering dates? 23-27 November 2026</span>
+            <select name="travel_availability">
+              <option value="">Select one</option>
+              <option value="yes">Yes</option>
+              <option value="need-details">I need further details</option>
+            </select>
+          </label>
+        </div>
+        <div class="reg-step" data-step="9" hidden>
+          <label>
+            <span class="label">Investment</span>
+            <p class="field-note">The participation fee includes a direct contribution to community infrastructure, all meals, and the complete program (excluding flights to and from Santa Marta, Colombia). Investment starts at USD $5,500, depending on accommodation selection.</p>
+            <select name="investment_comfort">
+              <option value="">Select one</option>
+              <option value="accessible">This investment feels accessible to me.</option>
+              <option value="discuss">I'd like to discuss payment plans or financial support.</option>
+            </select>
+          </label>
+        </div>
+
         <div id="reg-error" style="display:none;margin-top:16px;font-size:13px;color:#8b3a2a;font-family:sans-serif;"></div>
-        <button type="submit" class="contact-submit">
-          <span>Submit application</span>
-          <svg viewBox="0 0 30 10" aria-hidden="true">
-            <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
-          </svg>
-        </button>
+
+        <div class="reg-nav">
+          <button type="button" class="reg-back-btn" id="reg-back" hidden>
+            <svg viewBox="0 0 30 10" aria-hidden="true">
+              <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+            </svg>
+            <span>Back</span>
+          </button>
+          <button type="button" class="contact-submit" id="reg-next">
+            <span>Next</span>
+            <svg viewBox="0 0 30 10" aria-hidden="true">
+              <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+            </svg>
+          </button>
+          <button type="submit" class="contact-submit" id="reg-submit" hidden>
+            <span>Submit application</span>
+            <svg viewBox="0 0 30 10" aria-hidden="true">
+              <path d="M0 5h27M22 1l5 4-5 4" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="square"/>
+            </svg>
+          </button>
+        </div>
       </form>
       <div class="form-success" id="reg-success">
         Your application has been received. We will review it with care and be in touch.
@@ -470,6 +508,6 @@
   </div>
 </div>
 
-<script src="assets/js/main.js?v=12"></script>
+<script src="assets/js/main.js?v=13"></script>
 </body>
 </html>

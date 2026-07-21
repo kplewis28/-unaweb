@@ -469,6 +469,30 @@ img { max-width: 100%; display: block; }
 .contact-submit svg { width: 30px; height: 10px; display: block; transition: transform .45s cubic-bezier(.2,.7,.2,1); }
 .contact-submit:hover { gap: 24px; }
 .contact-submit:hover svg { transform: translateX(6px); }
+
+/* ---- MULTI-STEP APPLICATION FORM ---- */
+.reg-progress { margin: 6px 0 30px; }
+.reg-progress-label {
+  display: block; font-family: var(--sans); font-size: 10px; letter-spacing: .3em;
+  text-transform: uppercase; color: var(--olive); opacity: .6; margin-bottom: 10px;
+}
+.reg-progress-track { height: 1px; background: rgba(71,62,15,.15); }
+.reg-progress-fill { height: 1px; background: var(--olive); transition: width .4s cubic-bezier(.2,.7,.2,1); }
+.reg-step { display: flex; flex-direction: column; gap: 34px; }
+.reg-step[hidden] { display: none; }
+.reg-nav {
+  display: flex; align-items: center; justify-content: space-between; margin-top: 18px;
+}
+.reg-nav .contact-submit { margin-top: 0; }
+.reg-back-btn {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 12px;
+  font-family: var(--sans); text-transform: uppercase; letter-spacing: .3em; font-size: 11px;
+  color: var(--olive); opacity: .55; background: transparent; border: none;
+  padding: 12px 0 10px; cursor: pointer; transition: opacity .3s, gap .4s cubic-bezier(.2,.7,.2,1);
+}
+.reg-back-btn svg { width: 30px; height: 10px; display: block; transform: scaleX(-1); }
+.reg-back-btn:hover { opacity: .9; gap: 18px; }
+.reg-back-btn[hidden], .contact-submit[hidden] { display: none; }
 .contact-meta {
   margin-top: clamp(60px,9vh,90px); font-family: var(--sans); font-size: .78rem;
   letter-spacing: .28em; text-transform: uppercase; color: var(--olive); opacity: .65;

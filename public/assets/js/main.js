@@ -262,10 +262,13 @@
     var regSuccess=document.getElementById("reg-success");
     if(!modal) return;
 
+    var resetSteps=function(){};
+
     function openModal(){
       modal.classList.add("open");
       modal.removeAttribute("aria-hidden");
       document.body.style.overflow="hidden";
+      resetSteps();
       setTimeout(function(){ if(closeBtn) closeBtn.focus(); }, 120);
     }
     function closeModal(){
@@ -288,6 +291,17 @@
 
     if(regForm){
       var regError=document.getElementById("reg-error");
+      var regIntro=document.getElementById("reg-intro");
+      var regSteps=Array.prototype.slice.call(regForm.querySelectorAll(".reg-step"));
+      var totalSteps=regSteps.length;
+      var currentStep=1;
+      var backBtn=document.getElementById("reg-back");
+      var nextBtn=document.getElementById("reg-next");
+      var submitBtn=document.getElementById("reg-submit");
+      var progressCurrent=document.getElementById("reg-step-current");
+      var progressFill=document.getElementById("reg-progress-fill");
+      if(progressCurrent) document.getElementById("reg-step-total").textContent=totalSteps;
+
       function showRegError(msg){
         if(regError){ regError.textContent=msg; regError.style.display="block"; }
       }
@@ -295,19 +309,64 @@
         if(regError){ regError.textContent=""; regError.style.display="none"; }
       }
 
+      function firstInvalidField(container){
+        var fields=container.querySelectorAll("[required]");
+        for(var i=0;i<fields.length;i++){
+          if(!fields[i].value || !fields[i].value.trim()) return fields[i];
+        }
+        return null;
+      }
+
+      function goToStep(n){
+        currentStep=Math.max(1, Math.min(totalSteps, n));
+        regSteps.forEach(function(step){
+          step.hidden = Number(step.getAttribute("data-step")) !== currentStep;
+        });
+        if(regIntro) regIntro.style.display = currentStep===1 ? "" : "none";
+        if(backBtn) backBtn.hidden = currentStep===1;
+        if(nextBtn) nextBtn.hidden = currentStep===totalSteps;
+        if(submitBtn) submitBtn.hidden = currentStep!==totalSteps;
+        if(progressCurrent) progressCurrent.textContent=currentStep;
+        if(progressFill) progressFill.style.width=(currentStep/totalSteps*100)+"%";
+        clearRegError();
+        var firstField=regSteps[currentStep-1].querySelector("input,select,textarea");
+        if(firstField) setTimeout(function(){ firstField.focus(); }, 50);
+      }
+
+      resetSteps=function(){ goToStep(1); };
+
+      if(nextBtn) nextBtn.addEventListener("click", function(){
+        var invalid=firstInvalidField(regSteps[currentStep-1]);
+        if(invalid){ invalid.focus(); showRegError("Please complete this field to continue."); return; }
+        goToStep(currentStep+1);
+      });
+      if(backBtn) backBtn.addEventListener("click", function(){ goToStep(currentStep-1); });
+
+      regForm.addEventListener("keydown", function(e){
+        if(e.key!=="Enter") return;
+        var tag=e.target.tagName;
+        if(tag==="TEXTAREA") return;
+        e.preventDefault();
+        if(currentStep<totalSteps){ if(nextBtn) nextBtn.click(); }
+        else { regForm.requestSubmit ? regForm.requestSubmit() : regForm.dispatchEvent(new Event("submit",{cancelable:true})); }
+      });
+
+      resetSteps();
+
       regForm.addEventListener("submit", function(e){
         e.preventDefault();
         clearRegError();
+        var invalid=firstInvalidField(regForm);
+        if(invalid){
+          var invalidStep=invalid.closest(".reg-step");
+          if(invalidStep) goToStep(Number(invalidStep.getAttribute("data-step")));
+          invalid.focus();
+          showRegError("Please complete this field to continue.");
+          return;
+        }
         var name=regForm.querySelector('[name="name"]').value.trim();
         var email=regForm.querySelector('[name="email"]').value.trim();
         var linkedin=regForm.querySelector('[name="linkedin"]').value.trim();
-        if(!name||!email||!linkedin){
-          if(!name) regForm.querySelector('[name="name"]').focus();
-          else if(!email) regForm.querySelector('[name="email"]').focus();
-          else regForm.querySelector('[name="linkedin"]').focus();
-          return;
-        }
-        var submitBtn=regForm.querySelector('[type="submit"]');
         var submitSpan=submitBtn ? submitBtn.querySelector("span") : null;
         if(submitBtn) submitBtn.disabled=true;
         if(submitSpan) submitSpan.textContent="Sending…";
@@ -336,6 +395,9 @@
         .then(function(data){
           if(data.ok){
             regForm.style.display="none";
+            var regProgress=document.getElementById("reg-progress");
+            if(regProgress) regProgress.style.display="none";
+            if(regIntro) regIntro.style.display="none";
             if(regSuccess) regSuccess.classList.add("show");
           } else {
             if(submitBtn) submitBtn.disabled=false;
