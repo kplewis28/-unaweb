@@ -74,6 +74,22 @@ const HOW_HEARD_LABELS: Record<string, string> = {
   otro: "Other",
 };
 
+const ORG_CONNECTION_LABELS: Record<string, string> = {
+  yes: "Yes",
+  potentially: "Potentially",
+  "not-at-this-time": "Not at this time",
+};
+
+const TRAVEL_AVAILABILITY_LABELS: Record<string, string> = {
+  yes: "Yes",
+  "need-details": "I need further details",
+};
+
+const INVESTMENT_COMFORT_LABELS: Record<string, string> = {
+  accessible: "This investment feels accessible to me.",
+  discuss: "I'd like to discuss payment plans or financial support.",
+};
+
 const label: React.CSSProperties = {
   fontFamily: "var(--font-sans)",
   fontSize: "9px",
@@ -481,11 +497,31 @@ export default function DashboardClient({ applications, messages, userEmail }: P
                       display: "flex", flexDirection: "column", gap: "28px",
                     }}>
 
-                      {/* Why attend */}
+                      {/* Legacy "why attend" answer, kept for applications submitted before the form update */}
                       {app.why_attend && (
                         <div>
                           <span style={label}>Why do they want to attend?</span>
                           <p style={{ ...value, maxWidth: "680px" }}>{app.why_attend}</p>
+                        </div>
+                      )}
+
+                      {/* Open-ended questions */}
+                      {app.q_draw && (
+                        <div>
+                          <span style={label}>What draws them to this gathering right now?</span>
+                          <p style={{ ...value, maxWidth: "680px" }}>{app.q_draw}</p>
+                        </div>
+                      )}
+                      {app.q_work_intersection && (
+                        <div>
+                          <span style={label}>How does their work intersect with Indigenous knowledge, climate, culture, or systems change?</span>
+                          <p style={{ ...value, maxWidth: "680px" }}>{app.q_work_intersection}</p>
+                        </div>
+                      )}
+                      {app.q_responsible_participation && (
+                        <div>
+                          <span style={label}>What does responsible participation mean to them?</span>
+                          <p style={{ ...value, maxWidth: "680px" }}>{app.q_responsible_participation}</p>
                         </div>
                       )}
 
@@ -501,9 +537,41 @@ export default function DashboardClient({ applications, messages, userEmail }: P
                         )}
                         {app.social_media && (
                           <div>
-                            <span style={label}>Social media</span>
+                            <span style={label}>LinkedIn / Website</span>
                             <p style={{ ...value, fontSize: "15px", margin: 0 }}>
                               {app.social_media}
+                            </p>
+                          </div>
+                        )}
+                        {app.phone && (
+                          <div>
+                            <span style={label}>Mobile / WhatsApp</span>
+                            <p style={{ ...value, fontSize: "15px", margin: 0 }}>
+                              {app.phone}
+                            </p>
+                          </div>
+                        )}
+                        {app.org_connection && (
+                          <div>
+                            <span style={label}>Connected to an org/foundation/brand?</span>
+                            <p style={{ ...value, fontSize: "15px", margin: 0 }}>
+                              {ORG_CONNECTION_LABELS[app.org_connection] ?? app.org_connection}
+                            </p>
+                          </div>
+                        )}
+                        {app.travel_availability && (
+                          <div>
+                            <span style={label}>Available to travel for the gathering dates?</span>
+                            <p style={{ ...value, fontSize: "15px", margin: 0 }}>
+                              {TRAVEL_AVAILABILITY_LABELS[app.travel_availability] ?? app.travel_availability}
+                            </p>
+                          </div>
+                        )}
+                        {app.investment_comfort && (
+                          <div>
+                            <span style={label}>Investment</span>
+                            <p style={{ ...value, fontSize: "15px", margin: 0 }}>
+                              {INVESTMENT_COMFORT_LABELS[app.investment_comfort] ?? app.investment_comfort}
                             </p>
                           </div>
                         )}

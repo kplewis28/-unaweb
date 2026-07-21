@@ -5,10 +5,27 @@ import { sendPaymentReminderEmail } from "@/lib/email/send-payment-reminder-emai
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { retreat_id, retreat_slug, name, email, country, profession, why_attend, how_heard, social_media, num_attendees } = body;
+    const {
+      retreat_id,
+      retreat_slug,
+      name,
+      email,
+      country,
+      profession,
+      how_heard,
+      social_media,
+      num_attendees,
+      phone,
+      q_draw,
+      q_work_intersection,
+      q_responsible_participation,
+      org_connection,
+      travel_availability,
+      investment_comfort,
+    } = body;
 
-    if (!name?.trim() || !email?.trim()) {
-      return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
+    if (!name?.trim() || !email?.trim() || !social_media?.trim()) {
+      return NextResponse.json({ error: "Name, email, and LinkedIn / Website are required." }, { status: 400 });
     }
     if (!retreat_id && !retreat_slug) {
       return NextResponse.json({ error: "Retreat is required." }, { status: 400 });
@@ -92,27 +109,35 @@ export async function POST(request: NextRequest) {
       // create a new application normally.
     }
 
-    const newApplication = {
+    const newApplication: Record<string, unknown> = {
       retreat_id: retreat.id,
       name: name.trim(),
       email: normalizedEmail,
       country: country?.trim() || null,
       profession: profession?.trim() || null,
-      why_attend: why_attend?.trim() || null,
       how_heard: how_heard || null,
       social_media: social_media?.trim() || null,
       num_attendees: Math.max(1, Number(num_attendees) || 1),
+      phone: phone?.trim() || null,
+      q_draw: q_draw?.trim() || null,
+      q_work_intersection: q_work_intersection?.trim() || null,
+      q_responsible_participation: q_responsible_participation?.trim() || null,
+      org_connection: org_connection || null,
+      travel_availability: travel_availability || null,
+      investment_comfort: investment_comfort || null,
       status: "pending",
     };
 
-    let { error } = await supabase.from("applications").insert(newApplication);
-
-    // The num_attendees column may not exist yet (pending migration) —
-    // retry without it rather than failing the whole submission.
-    if (error?.code === "PGRST204" && error.message.includes("num_attendees")) {
-      const { num_attendees: _num_attendees, ...withoutAttendees } = newApplication;
-      void _num_attendees;
-      ({ error } = await supabase.from("applications").insert(withoutAttendees));
+    // Columns added alongside a form update sometimes lag behind on the
+    // live schema until the migration is run — retry stripping whichever
+    // column PostgREST reports missing rather than failing the submission.
+    let error: { code?: string; message: string } | null = null;
+    for (let attempt = 0; attempt < Object.keys(newApplication).length; attempt++) {
+      ({ error } = await supabase.from("applications").insert(newApplication));
+      if (!error) break;
+      const missingColumn = error.code === "PGRST204" ? error.message.match(/'([^']+)' column/)?.[1] : null;
+      if (!missingColumn || !(missingColumn in newApplication)) break;
+      delete newApplication[missingColumn];
     }
 
     if (error) {

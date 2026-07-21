@@ -25,6 +25,13 @@ export interface Application {
   why_attend: string | null;
   how_heard: string | null;
   social_media: string | null;
+  phone: string | null;
+  q_draw: string | null;
+  q_work_intersection: string | null;
+  q_responsible_participation: string | null;
+  org_connection: string | null;
+  travel_availability: string | null;
+  investment_comfort: string | null;
   num_attendees: number;
   status: ApplicationStatus;
   access_code: string | null;

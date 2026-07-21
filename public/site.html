@@ -386,7 +386,10 @@
     <div class="reg-inner">
       <span class="eyebrow">Next Gathering · Sierra Nevada · Colombia · 23-27 November 2026</span>
       <h2 class="reg-title" id="reg-title">Apply to <em>attend</em></h2>
-      <p class="reg-desc">We review each application with care. If your profile aligns with the circle, we will reach out with next steps.</p>
+      <div class="reg-desc">
+        <p>Thank you for your interest in joining us for our next gathering in La Sierra Nevada de Santa Marta, Colombia. These gatherings are intentionally intimate. Their value lies not in exclusivity, but in the depth of the experience, years of trust and relationship that make them possible. Your investment helps sustain that ecosystem while supporting Indigenous-led initiatives that continue long after the gathering ends.</p>
+        <p>Please complete the short form below as openly and honestly as possible. All information you share will be used solely for internal purposes and treated with care and confidentiality.</p>
+      </div>
       <form class="contact-form" id="reg-form" novalidate>
         <div class="form-row">
           <label><span class="label">Full name</span><input type="text" name="name" required /></label>
@@ -394,12 +397,12 @@
         </div>
         <div class="form-row">
           <label><span class="label">Country of residence</span><input type="text" name="country" required /></label>
-          <label><span class="label">Profession</span><input type="text" name="profession" /></label>
+          <label><span class="label">Title / Organisation</span><input type="text" name="profession" /></label>
         </div>
-        <label>
-          <span class="label">Why do you feel called to attend?</span>
-          <textarea name="motivation" rows="5" placeholder="Share what draws you to this gathering and a little about who you are."></textarea>
-        </label>
+        <div class="form-row">
+          <label><span class="label">LinkedIn / Website</span><input type="text" name="linkedin" placeholder="https://" required /></label>
+          <label><span class="label">Mobile / WhatsApp (including country code)</span><input type="tel" name="phone" placeholder="+1 555 555 5555" /></label>
+        </div>
         <label>
           <span class="label">How did you hear about ÚNA?</span>
           <select name="source">
@@ -412,8 +415,45 @@
           </select>
         </label>
         <label>
-          <span class="label">Social media or LinkedIn (optional)</span>
-          <input type="text" name="social" placeholder="https://" />
+          <span class="label">What draws you to this gathering at this moment in your life or leadership journey?</span>
+          <textarea name="q_draw" rows="4" maxlength="500"></textarea>
+          <span class="field-hint">Max 500 characters</span>
+        </label>
+        <label>
+          <span class="label">How does your current, past, or aspirational work intersect with Indigenous knowledge, climate, culture, systems change, or creating positive impact?</span>
+          <textarea name="q_work_intersection" rows="4" maxlength="500"></textarea>
+          <span class="field-hint">Max 500 characters</span>
+        </label>
+        <label>
+          <span class="label">This convening centers Indigenous spiritual and ecological leadership. What does responsible participation in such a space mean to you?</span>
+          <textarea name="q_responsible_participation" rows="4" maxlength="500"></textarea>
+          <span class="field-hint">Max 500 characters</span>
+        </label>
+        <label>
+          <span class="label">Are you connected to an organisation, foundation, or company/brand interested in supporting Indigenous-led initiatives?</span>
+          <select name="org_connection">
+            <option value="">Select one</option>
+            <option value="yes">Yes</option>
+            <option value="potentially">Potentially</option>
+            <option value="not-at-this-time">Not at this time</option>
+          </select>
+        </label>
+        <label>
+          <span class="label">Are you available to travel to Santa Marta, Colombia for the gathering dates? 23-27 November 2026</span>
+          <select name="travel_availability">
+            <option value="">Select one</option>
+            <option value="yes">Yes</option>
+            <option value="need-details">I need further details</option>
+          </select>
+        </label>
+        <label>
+          <span class="label">Investment</span>
+          <p class="field-note">The participation fee includes a direct contribution to community infrastructure, all meals, and the complete program (excluding flights to and from Santa Marta, Colombia). Investment starts at USD $5,500, depending on accommodation selection.</p>
+          <select name="investment_comfort">
+            <option value="">Select one</option>
+            <option value="accessible">This investment feels accessible to me.</option>
+            <option value="discuss">I'd like to discuss payment plans or financial support.</option>
+          </select>
         </label>
         <div id="reg-error" style="display:none;margin-top:16px;font-size:13px;color:#8b3a2a;font-family:sans-serif;"></div>
         <button type="submit" class="contact-submit">
@@ -430,6 +470,6 @@
   </div>
 </div>
 
-<script src="assets/js/main.js?v=11"></script>
+<script src="assets/js/main.js?v=12"></script>
 </body>
 </html>

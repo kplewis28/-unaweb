@@ -300,9 +300,11 @@
         clearRegError();
         var name=regForm.querySelector('[name="name"]').value.trim();
         var email=regForm.querySelector('[name="email"]').value.trim();
-        if(!name||!email){
+        var linkedin=regForm.querySelector('[name="linkedin"]').value.trim();
+        if(!name||!email||!linkedin){
           if(!name) regForm.querySelector('[name="name"]').focus();
-          else regForm.querySelector('[name="email"]').focus();
+          else if(!email) regForm.querySelector('[name="email"]').focus();
+          else regForm.querySelector('[name="linkedin"]').focus();
           return;
         }
         var submitBtn=regForm.querySelector('[type="submit"]');
@@ -319,9 +321,15 @@
             email:email,
             country:(regForm.querySelector('[name="country"]').value||"").trim()||null,
             profession:(regForm.querySelector('[name="profession"]').value||"").trim()||null,
-            why_attend:(regForm.querySelector('[name="motivation"]').value||"").trim()||null,
             how_heard:regForm.querySelector('[name="source"]').value||null,
-            social_media:(regForm.querySelector('[name="social"]').value||"").trim()||null
+            social_media:linkedin,
+            phone:(regForm.querySelector('[name="phone"]').value||"").trim()||null,
+            q_draw:(regForm.querySelector('[name="q_draw"]').value||"").trim()||null,
+            q_work_intersection:(regForm.querySelector('[name="q_work_intersection"]').value||"").trim()||null,
+            q_responsible_participation:(regForm.querySelector('[name="q_responsible_participation"]').value||"").trim()||null,
+            org_connection:regForm.querySelector('[name="org_connection"]').value||null,
+            travel_availability:regForm.querySelector('[name="travel_availability"]').value||null,
+            investment_comfort:regForm.querySelector('[name="investment_comfort"]').value||null
           })
         })
         .then(function(r){return r.json();})
