@@ -24,8 +24,27 @@ export async function POST(request: NextRequest) {
       investment_comfort,
     } = body;
 
-    if (!name?.trim() || !email?.trim() || !social_media?.trim()) {
-      return NextResponse.json({ error: "Name, email, and LinkedIn / Website are required." }, { status: 400 });
+    const requiredFields: Record<string, unknown> = {
+      "Full name": name,
+      Email: email,
+      "Country of residence": country,
+      "LinkedIn / Website": social_media,
+      "Mobile / WhatsApp": phone,
+      "What draws you to this gathering": q_draw,
+      "How your work intersects": q_work_intersection,
+      "What responsible participation means to you": q_responsible_participation,
+      "Travel availability": travel_availability,
+      "Investment comfort": investment_comfort,
+    };
+    const missingField = Object.entries(requiredFields).find(([, value]) => !`${value ?? ""}`.trim());
+    if (missingField) {
+      return NextResponse.json({ error: `${missingField[0]} is required.` }, { status: 400 });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
+    }
+    if (!/^https?:\/\/.+/i.test(social_media.trim())) {
+      return NextResponse.json({ error: "Please enter a valid LinkedIn / Website URL." }, { status: 400 });
     }
     if (!retreat_id && !retreat_slug) {
       return NextResponse.json({ error: "Retreat is required." }, { status: 400 });

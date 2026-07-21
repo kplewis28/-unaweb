@@ -310,11 +310,20 @@
       }
 
       function firstInvalidField(container){
-        var fields=container.querySelectorAll("[required]");
+        var fields=container.querySelectorAll("input,select,textarea");
         for(var i=0;i<fields.length;i++){
-          if(!fields[i].value || !fields[i].value.trim()) return fields[i];
+          if(!fields[i].checkValidity()) return fields[i];
         }
         return null;
+      }
+
+      function messageForField(field){
+        var v=field.validity;
+        if(v.valueMissing) return "Please complete this field to continue.";
+        if(v.typeMismatch && field.type==="email") return "Please enter a valid email address.";
+        if(v.typeMismatch && field.type==="url") return "Please enter a valid URL (starting with https://).";
+        if(v.patternMismatch && field.name==="phone_number") return "Please enter a valid phone number.";
+        return "Please check this field before continuing.";
       }
 
       function goToStep(n){
@@ -337,7 +346,7 @@
 
       if(nextBtn) nextBtn.addEventListener("click", function(){
         var invalid=firstInvalidField(regSteps[currentStep-1]);
-        if(invalid){ invalid.focus(); showRegError("Please complete this field to continue."); return; }
+        if(invalid){ invalid.focus(); showRegError(messageForField(invalid)); return; }
         goToStep(currentStep+1);
       });
       if(backBtn) backBtn.addEventListener("click", function(){ goToStep(currentStep-1); });
@@ -361,12 +370,14 @@
           var invalidStep=invalid.closest(".reg-step");
           if(invalidStep) goToStep(Number(invalidStep.getAttribute("data-step")));
           invalid.focus();
-          showRegError("Please complete this field to continue.");
+          showRegError(messageForField(invalid));
           return;
         }
         var name=regForm.querySelector('[name="name"]').value.trim();
         var email=regForm.querySelector('[name="email"]').value.trim();
         var linkedin=regForm.querySelector('[name="linkedin"]').value.trim();
+        var phoneCode=regForm.querySelector('[name="phone_code"]').value||"";
+        var phoneNumber=(regForm.querySelector('[name="phone_number"]').value||"").trim();
         var submitSpan=submitBtn ? submitBtn.querySelector("span") : null;
         if(submitBtn) submitBtn.disabled=true;
         if(submitSpan) submitSpan.textContent="Sending…";
@@ -382,7 +393,7 @@
             profession:(regForm.querySelector('[name="profession"]').value||"").trim()||null,
             how_heard:regForm.querySelector('[name="source"]').value||null,
             social_media:linkedin,
-            phone:(regForm.querySelector('[name="phone"]').value||"").trim()||null,
+            phone:phoneNumber?(phoneCode+" "+phoneNumber):null,
             q_draw:(regForm.querySelector('[name="q_draw"]').value||"").trim()||null,
             q_work_intersection:(regForm.querySelector('[name="q_work_intersection"]').value||"").trim()||null,
             q_responsible_participation:(regForm.querySelector('[name="q_responsible_participation"]').value||"").trim()||null,
