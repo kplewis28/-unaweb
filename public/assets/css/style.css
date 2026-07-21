@@ -454,11 +454,23 @@ img { max-width: 100%; display: block; }
 .contact-form input:focus,
 .contact-form textarea:focus,
 .contact-form select:focus { border-bottom-color: var(--olive); }
+.contact-form input.invalid,
+.contact-form textarea.invalid,
+.contact-form select.invalid { border-bottom-color: #8b3a2a; }
+.field-error {
+  display: none; margin-top: 8px; font-family: var(--sans); font-size: 12px;
+  line-height: 1.4; color: #8b3a2a;
+}
+.field-error.show { display: block; }
 .contact-form textarea { resize: vertical; min-height: 80px; font-family: var(--serif); }
 .contact-form select {
   appearance: none; cursor: pointer;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23473e0f' stroke-width='1.2'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 4px center; padding-right: 24px;
+}
+.contact-form select:invalid { color: var(--olive); opacity: .55; }
+.contact-form option {
+  background: var(--bone); color: var(--olive); font-family: var(--serif);
 }
 .contact-submit {
   align-self: flex-start; margin-top: 18px; display: inline-flex; align-items: center; gap: 16px;

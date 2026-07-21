@@ -309,22 +309,83 @@
         if(regError){ regError.textContent=""; regError.style.display="none"; }
       }
 
-      function firstInvalidField(container){
-        var fields=container.querySelectorAll("input,select,textarea");
-        for(var i=0;i<fields.length;i++){
-          if(!fields[i].checkValidity()) return fields[i];
-        }
-        return null;
-      }
+      var REQUIRED_MESSAGES={
+        name:"Full name is required.",
+        email:"Email is required.",
+        country:"Country of residence is required.",
+        linkedin:"LinkedIn or website link is required.",
+        phone_code:"Please select your country code.",
+        phone_number:"Phone number is required.",
+        q_draw:"Please answer this question.",
+        q_work_intersection:"Please answer this question.",
+        q_responsible_participation:"Please answer this question.",
+        travel_availability:"Please let us know if you're available to travel.",
+        investment_comfort:"Please select an option."
+      };
 
       function messageForField(field){
         var v=field.validity;
-        if(v.valueMissing) return "Please complete this field to continue.";
-        if(v.typeMismatch && field.type==="email") return "Please enter a valid email address.";
-        if(v.typeMismatch && field.type==="url") return "Please enter a valid URL (starting with https://).";
-        if(v.patternMismatch && field.name==="phone_number") return "Please enter a valid phone number.";
+        if(v.valueMissing) return REQUIRED_MESSAGES[field.name]||"Please complete this field to continue.";
+        if(v.typeMismatch && field.type==="email") return "Please enter a valid email address (e.g. name@example.com).";
+        if(v.typeMismatch && field.type==="url") return "Please enter a valid URL starting with https://.";
+        if(v.patternMismatch && field.name==="phone_number") return "Please enter a valid phone number (digits only).";
         return "Please check this field before continuing.";
       }
+
+      function errorAnchor(field){
+        return field.closest(".phone-inputs") || field;
+      }
+
+      function setFieldError(field, message){
+        field.classList.add("invalid");
+        var anchor=errorAnchor(field);
+        var err=anchor.nextElementSibling;
+        if(!err || !err.classList || !err.classList.contains("field-error")){
+          err=document.createElement("span");
+          err.className="field-error";
+          anchor.parentNode.insertBefore(err, anchor.nextSibling);
+        }
+        err.textContent=message;
+        err.classList.add("show");
+        err.dataset.for=field.name;
+      }
+
+      function clearFieldError(field){
+        field.classList.remove("invalid");
+        var anchor=errorAnchor(field);
+        var err=anchor.nextElementSibling;
+        if(err && err.classList && err.classList.contains("field-error") && err.dataset.for===field.name){
+          err.classList.remove("show");
+          err.textContent="";
+        }
+      }
+
+      function clearStepFieldErrors(step){
+        step.querySelectorAll("input,select,textarea").forEach(clearFieldError);
+      }
+
+      function validateStep(step){
+        var fields=Array.prototype.slice.call(step.querySelectorAll("input,select,textarea"));
+        var firstInvalid=null;
+        fields.forEach(function(field){
+          if(field.checkValidity()){
+            clearFieldError(field);
+          } else {
+            setFieldError(field, messageForField(field));
+            if(!firstInvalid) firstInvalid=field;
+          }
+        });
+        return firstInvalid;
+      }
+
+      regForm.addEventListener("input", function(e){
+        var field=e.target;
+        if(field.matches && field.matches("input,select,textarea") && field.checkValidity()) clearFieldError(field);
+      });
+      regForm.addEventListener("change", function(e){
+        var field=e.target;
+        if(field.matches && field.matches("input,select,textarea") && field.checkValidity()) clearFieldError(field);
+      });
 
       function goToStep(n){
         currentStep=Math.max(1, Math.min(totalSteps, n));
@@ -338,6 +399,7 @@
         if(progressCurrent) progressCurrent.textContent=currentStep;
         if(progressFill) progressFill.style.width=(currentStep/totalSteps*100)+"%";
         clearRegError();
+        clearStepFieldErrors(regSteps[currentStep-1]);
         var firstField=regSteps[currentStep-1].querySelector("input,select,textarea");
         if(firstField) setTimeout(function(){ firstField.focus(); }, 50);
       }
@@ -345,8 +407,8 @@
       resetSteps=function(){ goToStep(1); };
 
       if(nextBtn) nextBtn.addEventListener("click", function(){
-        var invalid=firstInvalidField(regSteps[currentStep-1]);
-        if(invalid){ invalid.focus(); showRegError(messageForField(invalid)); return; }
+        var invalid=validateStep(regSteps[currentStep-1]);
+        if(invalid){ invalid.focus(); return; }
         goToStep(currentStep+1);
       });
       if(backBtn) backBtn.addEventListener("click", function(){ goToStep(currentStep-1); });
@@ -365,12 +427,15 @@
       regForm.addEventListener("submit", function(e){
         e.preventDefault();
         clearRegError();
-        var invalid=firstInvalidField(regForm);
+        var invalid=null;
+        for(var s=0;s<regSteps.length;s++){
+          var stepInvalid=validateStep(regSteps[s]);
+          if(stepInvalid && !invalid) invalid=stepInvalid;
+        }
         if(invalid){
           var invalidStep=invalid.closest(".reg-step");
           if(invalidStep) goToStep(Number(invalidStep.getAttribute("data-step")));
           invalid.focus();
-          showRegError(messageForField(invalid));
           return;
         }
         var name=regForm.querySelector('[name="name"]').value.trim();
