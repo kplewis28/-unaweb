@@ -510,8 +510,8 @@ img { max-width: 100%; display: block; }
   letter-spacing: .28em; text-transform: uppercase; color: var(--olive); opacity: .65;
 }
 .form-success {
-  display: none; text-align: center; padding: 60px 0;
-  font-family: var(--serif); font-size: 1.32rem; color: var(--olive); font-style: italic;
+  display: none; text-align: left; padding: 60px 0; max-width: 52ch;
+  font-family: var(--serif); font-size: 1.32rem; line-height: 1.4; color: var(--olive); font-style: italic;
 }
 .form-success.show { display: block; animation: tabFade .6s ease both; }
 
