@@ -627,6 +627,7 @@ img { max-width: 100%; display: block; }
 .footer-tagline {
   display: block; font-family: var(--sans); font-size: .8rem;
   letter-spacing: .04em; font-weight: 400; color: var(--sage-soft);
+  text-transform: uppercase;
 }
 .footer-nav {
   display: flex; gap: clamp(50px,6vw,96px);
