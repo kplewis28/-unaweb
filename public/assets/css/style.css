@@ -708,7 +708,7 @@ img { max-width: 100%; display: block; }
   .exp-col:first-child { flex: 1 1 0; }
   .exp-col:first-child .exp-block .body { font-size: 1.08rem; }
 
-  .cycle { padding: 80px 22px 90px; }
+  .cycle { padding: 108px 22px 90px; }
   .stage-grid { grid-template-columns: 1fr; grid-template-rows: none; }
   .spiral-cell { grid-area: auto/1; margin-bottom: 40px; }
   #cycle-svg { max-width: 300px; }
@@ -720,7 +720,7 @@ img { max-width: 100%; display: block; }
   .stage .rule { margin: 12px 0 !important; }
   .cycle::before { display: none; }
 
-  .gatherings { padding: 70px 22px 80px; }
+  .gatherings { padding: 98px 22px 80px; }
   .gatherings-grid { grid-template-columns: 1fr; row-gap: 40px; }
   .g-image { justify-self: center; width: 100%; max-width: none; }
   .g-content { max-width: none; }
@@ -732,7 +732,7 @@ img { max-width: 100%; display: block; }
   .prev-grid { grid-template-columns: 1fr; row-gap: 42px; }
   .prev-title { font-size: clamp(1.9rem,9vw,2.6rem); }
 
-  .contact { padding: 70px 22px 80px; }
+  .contact { padding: 98px 22px 80px; }
   .contact-form .form-row { grid-template-columns: 1fr; gap: 30px; }
   .contact::after { display: none; }
 
