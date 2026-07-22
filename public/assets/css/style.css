@@ -669,6 +669,11 @@ img { max-width: 100%; display: block; }
     transition: transform .35s, opacity .25s; z-index: 39;
   }
   .topnav .links.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  .nav-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,.45);
+    opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 38;
+  }
+  .nav-backdrop.open { opacity: 1; pointer-events: auto; }
   .topnav .links a {
     padding: 18px 0; font-size: 12px; letter-spacing: .32em;
     border-bottom: 1px solid rgba(171,170,112,.1); display: block; width: 100%;

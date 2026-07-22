@@ -127,10 +127,12 @@
   (function(){
     var toggle=document.querySelector('.nav-toggle');
     var links=document.getElementById('nav-links');
+    var backdrop=document.getElementById('nav-backdrop');
     if(!toggle||!links) return;
     function setOpen(open){
       toggle.classList.toggle('open',open);
       links.classList.toggle('open',open);
+      if(backdrop) backdrop.classList.toggle('open',open);
       toggle.setAttribute('aria-expanded', open?'true':'false');
     }
     toggle.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!toggle.classList.contains('open')); });
