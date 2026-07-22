@@ -20,10 +20,12 @@ export default function AdminNav({ right }: Props) {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          flexWrap: "wrap",
+          rowGap: "10px",
           padding: "18px clamp(20px, 4vw, 48px)",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", minWidth: 0 }}>
           <a href="/" style={{ display: "flex", lineHeight: 0 }} aria-label="Back to una.eco">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img

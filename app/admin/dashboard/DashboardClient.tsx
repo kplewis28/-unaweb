@@ -228,9 +228,10 @@ export default function DashboardClient({ applications, messages, userEmail }: P
       {/* Header */}
       <AdminNav
         right={
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--cream)", opacity: 0.7,
+              maxWidth: "45vw", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>{userEmail}</span>
             <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
           </div>
@@ -281,6 +282,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
         <div style={{
           display: "flex", gap: 0, marginBottom: "20px",
           borderBottom: "1px solid var(--sage-muted)",
+          overflowX: "auto", WebkitOverflowScrolling: "touch",
         }}>
           {(["all", "pending", "approved", "paid", "rejected"] as const).map((tab) => (
             <button
@@ -291,6 +293,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
                 borderBottom: filter === tab ? "2px solid var(--olive)" : "2px solid transparent",
                 marginBottom: "-1px",
                 padding: "10px 22px",
+                whiteSpace: "nowrap", flexShrink: 0,
                 fontFamily: "var(--font-sans)", fontSize: "10px",
                 letterSpacing: "0.22em", textTransform: "uppercase",
                 color: filter === tab ? "var(--olive)" : "var(--sage)",

@@ -133,9 +133,15 @@
       links.classList.toggle('open',open);
       toggle.setAttribute('aria-expanded', open?'true':'false');
     }
-    toggle.addEventListener('click', function(){ setOpen(!toggle.classList.contains('open')); });
+    toggle.addEventListener('click', function(e){ e.stopPropagation(); setOpen(!toggle.classList.contains('open')); });
     links.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ setOpen(false); }); });
     window.addEventListener('resize', function(){ if(window.innerWidth>880) setOpen(false); });
+    document.addEventListener('click', function(e){
+      if(!toggle.classList.contains('open')) return;
+      if(links.contains(e.target) || toggle.contains(e.target)) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') setOpen(false); });
   })();
 
   /* -------- VOICES CAROUSEL -------- */

@@ -37,7 +37,8 @@
   <div class="tab active" data-tab-content="home">
 
     <section class="hero">
-      <video class="hero-vid" autoplay muted loop playsinline>
+      <video class="hero-vid" autoplay muted loop playsinline preload="auto" poster="assets/images/hero-poster.jpg">
+        <source src="assets/images/una-web-mobile.mp4" type="video/mp4" media="(max-width: 880px)" />
         <source src="assets/images/una-web.mp4" type="video/mp4" />
       </video>
       <div class="hero-sound-wrap">
@@ -702,6 +703,6 @@
   </div>
 </div>
 
-<script src="assets/js/main.js?v=13"></script>
+<script src="assets/js/main.js?v=14"></script>
 </body>
 </html>
