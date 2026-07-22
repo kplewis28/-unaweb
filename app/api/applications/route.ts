@@ -121,8 +121,13 @@ export async function POST(request: NextRequest) {
             emailSent: emailResult.success,
           });
         }
-        // status is "approved" but the access code has expired: fall through
+        // status is "approved" but the access code has expired: mark it as
+        // such so it stops showing as an active approval, then fall through
         // and let them submit a fresh application below.
+        await supabase
+          .from("applications")
+          .update({ status: "expired" })
+          .eq("id", existing.id);
       }
 
       // "rejected", or "approved" with an expired code: fall through to

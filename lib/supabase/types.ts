@@ -1,4 +1,4 @@
-export type ApplicationStatus = "pending" | "approved" | "rejected" | "paid";
+export type ApplicationStatus = "pending" | "approved" | "rejected" | "paid" | "expired";
 
 export interface Retreat {
   id: string;

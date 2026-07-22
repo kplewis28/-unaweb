@@ -202,6 +202,7 @@ const STATUS_LABELS: Record<string, string> = {
   approved: "Approved",
   rejected: "Rejected",
   paid: "Paid",
+  expired: "Expired",
 };
 
 const STATUS_CLASSES: Record<string, string> = {
@@ -209,6 +210,7 @@ const STATUS_CLASSES: Record<string, string> = {
   approved: "badge badge-approved",
   rejected: "badge badge-rejected",
   paid: "badge badge-paid",
+  expired: "badge badge-expired",
 };
 
 const HOW_HEARD_LABELS: Record<string, string> = {
@@ -257,7 +259,7 @@ const value: React.CSSProperties = {
 export default function DashboardClient({ applications, messages, userEmail }: Props) {
   const router = useRouter();
   const [view, setView] = useState<"applications" | "messages">("applications");
-  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "paid">("all");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "paid" | "expired">("all");
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
@@ -376,6 +378,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
     approved: applications.filter((a) => a.status === "approved").length,
     rejected: applications.filter((a) => a.status === "rejected").length,
     paid: applications.filter((a) => a.status === "paid").length,
+    expired: applications.filter((a) => a.status === "expired").length,
   };
 
   return (
@@ -430,7 +433,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
             margin: 0, fontFamily: "var(--font-sans)", fontSize: "11px",
             letterSpacing: "0.08em", color: "var(--sage)",
           }}>
-            {counts.all} total · {counts.pending} pending · {counts.approved} approved · {counts.paid} paid · {counts.rejected} rejected
+            {counts.all} total · {counts.pending} pending · {counts.approved} approved · {counts.paid} paid · {counts.rejected} rejected · {counts.expired} expired
           </p>
         </div>
 
@@ -445,7 +448,7 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           borderBottom: "1px solid var(--sage-muted)",
           overflowX: "auto", WebkitOverflowScrolling: "touch",
         }}>
-          {(["all", "pending", "approved", "paid", "rejected"] as const).map((tab) => (
+          {(["all", "pending", "approved", "paid", "rejected", "expired"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
