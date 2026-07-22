@@ -46,6 +46,38 @@ function ResultIcon({ type }: { type: ActionResult["type"] }) {
   );
 }
 
+function DateField({
+  id, label, value, onChange,
+}: { id: string; label: string; value: string; onChange: (value: string) => void }) {
+  return (
+    <div style={{ minWidth: 0 }}>
+      <label htmlFor={id} className="una-input-label">{label}</label>
+      <div style={{
+        display: "flex", alignItems: "center", gap: "8px",
+        background: "var(--cream)", border: "1px solid var(--sage-muted)",
+        borderRadius: "8px", padding: "9px 12px",
+      }}>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }} aria-hidden="true">
+          <rect x="1.5" y="2.5" width="13" height="12" rx="1.5" stroke="var(--sage)" strokeWidth="1.1" />
+          <path d="M1.5 6.3H14.5" stroke="var(--sage)" strokeWidth="1.1" />
+          <path d="M4.5 1V3.6M11.5 1V3.6" stroke="var(--sage)" strokeWidth="1.1" strokeLinecap="round" />
+        </svg>
+        <input
+          id={id}
+          type="date"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          style={{
+            flex: 1, minWidth: 0, fontFamily: "var(--font-sans)", fontSize: "12px",
+            color: "var(--ink-soft)", background: "transparent", border: "none",
+            padding: 0, outline: "none",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   applications: Application[];
   messages: ContactMessage[];
@@ -105,6 +137,8 @@ const value: React.CSSProperties = {
   fontSize: "17px",
   color: "var(--ink-soft)",
   lineHeight: 1.5,
+  overflowWrap: "break-word",
+  wordBreak: "break-word",
 };
 
 export default function DashboardClient({ applications, messages, userEmail }: Props) {
@@ -311,34 +345,8 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
           marginBottom: "32px",
         }}>
-          <div>
-            <label htmlFor="date-from" className="una-input-label">From</label>
-            <input
-              id="date-from"
-              type="date"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              style={{
-                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
-                background: "var(--cream)", border: "1px solid var(--sage-muted)",
-                borderRadius: "8px", padding: "8px 12px", outline: "none",
-              }}
-            />
-          </div>
-          <div>
-            <label htmlFor="date-to" className="una-input-label">To</label>
-            <input
-              id="date-to"
-              type="date"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              style={{
-                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
-                background: "var(--cream)", border: "1px solid var(--sage-muted)",
-                borderRadius: "8px", padding: "8px 12px", outline: "none",
-              }}
-            />
-          </div>
+          <DateField id="date-from" label="From" value={dateFrom} onChange={setDateFrom} />
+          <DateField id="date-to" label="To" value={dateTo} onChange={setDateTo} />
           {(dateFrom || dateTo) && (
             <button
               onClick={() => { setDateFrom(""); setDateTo(""); }}
@@ -654,34 +662,8 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
           marginBottom: "32px",
         }}>
-          <div>
-            <label htmlFor="msg-date-from" className="una-input-label">From</label>
-            <input
-              id="msg-date-from"
-              type="date"
-              value={msgDateFrom}
-              onChange={(e) => setMsgDateFrom(e.target.value)}
-              style={{
-                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
-                background: "var(--cream)", border: "1px solid var(--sage-muted)",
-                borderRadius: "8px", padding: "8px 12px", outline: "none",
-              }}
-            />
-          </div>
-          <div>
-            <label htmlFor="msg-date-to" className="una-input-label">To</label>
-            <input
-              id="msg-date-to"
-              type="date"
-              value={msgDateTo}
-              onChange={(e) => setMsgDateTo(e.target.value)}
-              style={{
-                fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)",
-                background: "var(--cream)", border: "1px solid var(--sage-muted)",
-                borderRadius: "8px", padding: "8px 12px", outline: "none",
-              }}
-            />
-          </div>
+          <DateField id="msg-date-from" label="From" value={msgDateFrom} onChange={setMsgDateFrom} />
+          <DateField id="msg-date-to" label="To" value={msgDateTo} onChange={setMsgDateTo} />
           {(msgDateFrom || msgDateTo) && (
             <button
               onClick={() => { setMsgDateFrom(""); setMsgDateTo(""); }}
