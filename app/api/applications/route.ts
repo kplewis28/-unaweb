@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
 
           return NextResponse.json({
             ok: true,
+            alreadyApproved: true,
             message: "You already have an approved spot — we've re-sent your access code by email.",
             emailSent: emailResult.success,
           });

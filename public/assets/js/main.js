@@ -504,7 +504,10 @@
             var regProgress=document.getElementById("reg-progress");
             if(regProgress) regProgress.style.display="none";
             if(regIntro) regIntro.style.display="none";
-            if(regSuccess) regSuccess.classList.add("show");
+            if(regSuccess){
+              if(data.alreadyApproved) regSuccess.textContent="You already have an approved spot for this gathering — we've re-sent your access code by email.";
+              regSuccess.classList.add("show");
+            }
           } else {
             if(submitBtn) submitBtn.disabled=false;
             if(submitSpan) submitSpan.textContent="Submit application";
