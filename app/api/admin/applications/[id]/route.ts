@@ -163,14 +163,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Failed to cancel approval." }, { status: 500 });
     }
 
-    // Mark the associated access code(s) as expired — best-effort, does not
-    // block the cancellation if no row exists yet for older applications.
-    await serviceClient
-      .from("access_codes")
-      .update({ status: "expired" })
-      .eq("application_id", id)
-      .eq("status", "active");
-
     return NextResponse.json({ ok: true, name: application.name, status: "cancelled" });
   }
 
@@ -210,21 +202,6 @@ export async function PATCH(
   if (updateError) {
     console.error("[PATCH /api/admin/applications] approve error:", updateError);
     return NextResponse.json({ error: "Failed to approve application." }, { status: 500 });
-  }
-
-  if (application.retreat_id) {
-    const { createServiceClient } = await import("@/lib/supabase/server");
-    const serviceClient = await createServiceClient();
-    const { error: accessCodeError } = await serviceClient.from("access_codes").insert({
-      code: accessCode,
-      application_id: id,
-      retreat_id: application.retreat_id,
-      status: "active",
-      expires_at: expiresAt.toISOString(),
-    });
-    if (accessCodeError) {
-      console.error("[PATCH /api/admin/applications] access_codes insert error:", accessCodeError);
-    }
   }
 
   // Send approval email (non-blocking — failure does NOT revert approval)
