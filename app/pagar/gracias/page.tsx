@@ -65,19 +65,9 @@ export default function GraciasPage() {
             opacity: 0.6,
           }}
         />
-        <p
-          style={{
-            marginTop: "32px",
-            fontFamily: "var(--font-sans)",
-            fontSize: "9px",
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            color: "var(--sage)",
-            opacity: 0.7,
-          }}
-        >
-          una.eco
-        </p>
+        <a href="https://una.eco" className="una-btn" style={{ marginTop: "36px", textDecoration: "none" }}>
+          Back to una.eco
+        </a>
       </div>
     </div>
   );
