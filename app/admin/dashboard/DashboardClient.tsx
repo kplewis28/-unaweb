@@ -78,6 +78,119 @@ function DateField({
   );
 }
 
+function SearchInput({
+  value, onChange, placeholder,
+}: { value: string; onChange: (value: string) => void; placeholder: string }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: "10px",
+      background: "var(--cream)", border: "1px solid var(--sage-muted)",
+      borderRadius: "8px", padding: "11px 14px", maxWidth: "360px",
+    }}>
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }} aria-hidden="true">
+        <circle cx="6.8" cy="6.8" r="5" stroke="var(--sage)" strokeWidth="1.2" />
+        <path d="M10.6 10.6L14.5 14.5" stroke="var(--sage)" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          flex: 1, minWidth: 0, border: "none", background: "transparent", outline: "none",
+          fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-soft)",
+        }}
+      />
+      {value && (
+        <button
+          onClick={() => onChange("")}
+          aria-label="Clear search"
+          style={{
+            border: "none", background: "transparent", cursor: "pointer", padding: 0,
+            color: "var(--sage)", display: "flex", alignItems: "center", flexShrink: 0,
+          }}
+        >
+          <svg width="12" height="12" viewBox="0 0 15 15" fill="none" aria-hidden="true">
+            <path d="M3.5 3.5L11.5 11.5M11.5 3.5L3.5 11.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+          </svg>
+        </button>
+      )}
+    </div>
+  );
+}
+
+function todayISO(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function daysAgoISO(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
+function DateRangeFilter({
+  idPrefix, dateFrom, dateTo, onChange,
+}: {
+  idPrefix: string; dateFrom: string; dateTo: string;
+  onChange: (from: string, to: string) => void;
+}) {
+  const [customOpen, setCustomOpen] = useState(false);
+  const today = todayISO();
+
+  const presets = [
+    { key: "all", label: "All time", from: "", to: "" },
+    { key: "today", label: "Today", from: today, to: today },
+    { key: "7d", label: "Last 7 days", from: daysAgoISO(6), to: today },
+    { key: "30d", label: "Last 30 days", from: daysAgoISO(29), to: today },
+  ];
+  const activePreset = presets.find((p) => p.from === dateFrom && p.to === dateTo);
+  const isCustom = !activePreset && Boolean(dateFrom || dateTo);
+
+  function chipStyle(active: boolean): React.CSSProperties {
+    return {
+      padding: "8px 16px", borderRadius: "20px", cursor: "pointer",
+      fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: "0.16em",
+      textTransform: "uppercase", whiteSpace: "nowrap",
+      border: active ? "1px solid var(--olive)" : "1px solid var(--sage-muted)",
+      background: active ? "var(--olive)" : "transparent",
+      color: active ? "var(--cream)" : "var(--sage)",
+      transition: "background 0.2s, color 0.2s, border-color 0.2s",
+    };
+  }
+
+  return (
+    <div style={{ marginBottom: "32px" }}>
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        {presets.map((p) => (
+          <button
+            key={p.key}
+            onClick={() => { onChange(p.from, p.to); setCustomOpen(false); }}
+            style={chipStyle(!isCustom && activePreset?.key === p.key)}
+          >
+            {p.label}
+          </button>
+        ))}
+        <button onClick={() => setCustomOpen((v) => !v)} style={chipStyle(isCustom || customOpen)}>
+          Custom range
+        </button>
+      </div>
+      {(customOpen || isCustom) && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "14px" }}>
+          <DateField
+            id={`${idPrefix}-from`} label="From" value={dateFrom}
+            onChange={(v) => onChange(v, dateTo)}
+          />
+          <DateField
+            id={`${idPrefix}-to`} label="To" value={dateTo}
+            onChange={(v) => onChange(dateFrom, v)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface Props {
   applications: Application[];
   messages: ContactMessage[];
@@ -145,8 +258,10 @@ export default function DashboardClient({ applications, messages, userEmail }: P
   const router = useRouter();
   const [view, setView] = useState<"applications" | "messages">("applications");
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "paid">("all");
+  const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [msgSearch, setMsgSearch] = useState("");
   const [msgDateFrom, setMsgDateFrom] = useState("");
   const [msgDateTo, setMsgDateTo] = useState("");
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -239,14 +354,21 @@ export default function DashboardClient({ applications, messages, userEmail }: P
     }
   }
 
+  const searchTerm = search.trim().toLowerCase();
+  const msgSearchTerm = msgSearch.trim().toLowerCase();
+
   const filtered = applications
     .filter((a) => filter === "all" || a.status === filter)
     .filter((a) => !dateFrom || a.created_at >= dateFrom)
-    .filter((a) => !dateTo || a.created_at <= `${dateTo}T23:59:59.999Z`);
+    .filter((a) => !dateTo || a.created_at <= `${dateTo}T23:59:59.999Z`)
+    .filter((a) => !searchTerm || [a.name, a.email, a.country, a.profession]
+      .filter(Boolean).some((field) => field!.toLowerCase().includes(searchTerm)));
 
   const filteredMessages = messages
     .filter((m) => !msgDateFrom || m.created_at >= msgDateFrom)
-    .filter((m) => !msgDateTo || m.created_at <= `${msgDateTo}T23:59:59.999Z`);
+    .filter((m) => !msgDateTo || m.created_at <= `${msgDateTo}T23:59:59.999Z`)
+    .filter((m) => !msgSearchTerm || [m.name, m.email, m.interest, m.message]
+      .filter(Boolean).some((field) => field!.toLowerCase().includes(msgSearchTerm)));
 
   const counts = {
     all: applications.length,
@@ -312,6 +434,11 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           </p>
         </div>
 
+        {/* Search */}
+        <div style={{ marginBottom: "20px" }}>
+          <SearchInput value={search} onChange={setSearch} placeholder="Search by name, email, country, profession…" />
+        </div>
+
         {/* Filter tabs */}
         <div style={{
           display: "flex", gap: 0, marginBottom: "20px",
@@ -341,22 +468,10 @@ export default function DashboardClient({ applications, messages, userEmail }: P
         </div>
 
         {/* Date filter */}
-        <div style={{
-          display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
-          marginBottom: "32px",
-        }}>
-          <DateField id="date-from" label="From" value={dateFrom} onChange={setDateFrom} />
-          <DateField id="date-to" label="To" value={dateTo} onChange={setDateTo} />
-          {(dateFrom || dateTo) && (
-            <button
-              onClick={() => { setDateFrom(""); setDateTo(""); }}
-              className="una-btn-ghost"
-              style={{ padding: "8px 16px" }}
-            >
-              Clear dates
-            </button>
-          )}
-        </div>
+        <DateRangeFilter
+          idPrefix="date" dateFrom={dateFrom} dateTo={dateTo}
+          onChange={(from, to) => { setDateFrom(from); setDateTo(to); }}
+        />
 
         {/* Applications list */}
         {filtered.length === 0 ? (
@@ -657,23 +772,16 @@ export default function DashboardClient({ applications, messages, userEmail }: P
           </p>
         </div>
 
-        {/* Date filter */}
-        <div style={{
-          display: "flex", alignItems: "flex-end", flexWrap: "wrap", gap: "16px",
-          marginBottom: "32px",
-        }}>
-          <DateField id="msg-date-from" label="From" value={msgDateFrom} onChange={setMsgDateFrom} />
-          <DateField id="msg-date-to" label="To" value={msgDateTo} onChange={setMsgDateTo} />
-          {(msgDateFrom || msgDateTo) && (
-            <button
-              onClick={() => { setMsgDateFrom(""); setMsgDateTo(""); }}
-              className="una-btn-ghost"
-              style={{ padding: "8px 16px" }}
-            >
-              Clear dates
-            </button>
-          )}
+        {/* Search */}
+        <div style={{ marginBottom: "20px" }}>
+          <SearchInput value={msgSearch} onChange={setMsgSearch} placeholder="Search by name, email, message…" />
         </div>
+
+        {/* Date filter */}
+        <DateRangeFilter
+          idPrefix="msg-date" dateFrom={msgDateFrom} dateTo={msgDateTo}
+          onChange={(from, to) => { setMsgDateFrom(from); setMsgDateTo(to); }}
+        />
 
         {/* Messages list */}
         {filteredMessages.length === 0 ? (
