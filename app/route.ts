@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 interface ActiveRetreat {
   name: string;
@@ -48,8 +48,15 @@ function replaceMarker(html: string, key: string, value: string): string {
   return html.replace(re, value);
 }
 
-async function fetchActiveRetreat(): Promise<ActiveRetreat | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
+async function fetchActiveRetreat(request: NextRequest): Promise<ActiveRetreat | null> {
+  // Resolve against the request's own host (matches the pattern used by
+  // app/admin/dashboard/page.tsx) rather than a hardcoded production
+  // domain — otherwise local/dev/preview environments would silently fetch
+  // production data instead of their own, which is confusing to test.
+  const host = request.headers.get("host");
+  const protocol = request.headers.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "development" ? "http" : "https");
+  const baseUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco");
+
   const res = await fetch(`${baseUrl}/api/retreats/active`, {
     next: { revalidate: 3600 },
   });
@@ -58,11 +65,12 @@ async function fetchActiveRetreat(): Promise<ActiveRetreat | null> {
   return retreat ?? null;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   let html = readFileSync(join(process.cwd(), "public", "site.html"), "utf-8");
 
   try {
-    const retreat = await fetchActiveRetreat();
+    const retreat = await fetchActiveRetreat(request);
+
     if (retreat) {
       const dateRange = formatDateRange(retreat.start_date, retreat.end_date);
       const locationHtml = retreat.location ? renderLocationHtml(retreat.location) : "Location to be announced";
@@ -76,8 +84,25 @@ export async function GET() {
       html = replaceMarker(html, "DATE", dateRange);
       html = replaceMarker(html, "DESC", descText);
       html = replaceMarker(html, "APPLY_DATE", dateRange);
+    } else {
+      // No open upcoming retreat right now (e.g. registration was closed
+      // with nothing new open yet). Show an honest placeholder instead of
+      // silently leaving whatever specific date happens to be hardcoded in
+      // site.html — that copy will otherwise go stale the moment this
+      // gathering's date passes, and nobody editing /admin/retreats would
+      // know to update it.
+      const noneText = "To be announced";
+      html = replaceMarker(html, "HERO_DATE", noneText);
+      html = replaceMarker(html, "MODAL_DATE", noneText);
+      html = replaceMarker(html, "LOCATION", noneText);
+      html = replaceMarker(html, "DATE", noneText);
+      html = replaceMarker(html, "DESC", "Stay tuned for our next gathering.");
+      html = replaceMarker(html, "APPLY_DATE", noneText);
     }
   } catch (err) {
+    // Network error/exception talking to /api/retreats/active — genuinely
+    // unknown state, so leave the static copy in site.html untouched rather
+    // than guess or show a "to be announced" placeholder that may be wrong.
     console.error("[GET /] failed to load active retreat, serving static copy:", err);
   }
 
