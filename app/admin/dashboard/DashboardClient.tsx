@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import type { Application, ContactMessage } from "@/lib/supabase/types";
+import type { Application, ContactMessage, Retreat } from "@/lib/supabase/types";
 import AdminNav from "../AdminNav";
 
 interface ActionResult {
@@ -194,6 +194,7 @@ function DateRangeFilter({
 interface Props {
   applications: Application[];
   messages: ContactMessage[];
+  retreat: Retreat | null;
   userEmail: string;
 }
 
@@ -256,7 +257,109 @@ const value: React.CSSProperties = {
   wordBreak: "break-word",
 };
 
-export default function DashboardClient({ applications, messages, userEmail }: Props) {
+function RetreatPriceSection({ retreat }: { retreat: Retreat }) {
+  const router = useRouter();
+  const [priceInput, setPriceInput] = useState(String(retreat.price_cents / 100));
+  const [saving, setSaving] = useState(false);
+  const [result, setResult] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  async function handleSave() {
+    const priceUsd = Number(priceInput);
+    if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
+      setResult({ type: "error", message: "Ingresa un precio válido en dólares." });
+      return;
+    }
+
+    setSaving(true);
+    setResult(null);
+    try {
+      const res = await fetch(`/api/admin/retreats/${retreat.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ price_usd: priceUsd }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setResult({ type: "error", message: data.error ?? "No se pudo actualizar el precio." });
+      } else {
+        setResult({ type: "success", message: "Precio actualizado correctamente." });
+        router.refresh();
+      }
+    } catch {
+      setResult({ type: "error", message: "No se pudo conectar con el servidor." });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="una-card" style={{
+      background: "var(--cream)", border: "1px solid var(--sage-muted)",
+      padding: "clamp(20px, 2.5vw, 28px) clamp(20px, 3vw, 32px)",
+      marginBottom: "36px",
+    }}>
+      <h2 style={{
+        margin: "0 0 4px", fontFamily: "var(--font-serif)",
+        fontWeight: 400, fontSize: "22px", color: "var(--olive)",
+      }}>
+        Retiro actual
+      </h2>
+      <p style={{
+        margin: "0 0 20px", fontFamily: "var(--font-sans)",
+        fontSize: "13px", color: "var(--ink-soft)",
+      }}>
+        {retreat.name}
+      </p>
+
+      <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap" }}>
+        <div>
+          <label htmlFor="retreat-price" className="una-input-label">Precio actual (USD)</label>
+          <div style={{
+            display: "flex", alignItems: "center", gap: "8px",
+            background: "var(--cream-warm)", border: "1px solid var(--sage-muted)",
+            borderRadius: "8px", padding: "9px 12px", width: "160px",
+          }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--sage)" }}>$</span>
+            <input
+              id="retreat-price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={priceInput}
+              onChange={(e) => setPriceInput(e.target.value)}
+              style={{
+                flex: 1, minWidth: 0, fontFamily: "var(--font-sans)", fontSize: "13px",
+                color: "var(--ink-soft)", background: "transparent", border: "none",
+                padding: 0, outline: "none",
+              }}
+            />
+          </div>
+        </div>
+
+        <button
+          disabled={saving}
+          onClick={handleSave}
+          className="una-btn"
+        >
+          {saving ? "Guardando…" : "Guardar precio"}
+        </button>
+      </div>
+
+      {result && (
+        <p style={{
+          margin: "14px 0 0", fontFamily: "var(--font-sans)", fontSize: "12px",
+          color: result.type === "success" ? "var(--success)" : "var(--error)",
+        }}>
+          {result.message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default function DashboardClient({ applications, messages, retreat, userEmail }: Props) {
   const router = useRouter();
   const [view, setView] = useState<"applications" | "messages">("applications");
   const [filter, setFilter] = useState<"all" | "pending" | "approved" | "rejected" | "paid" | "expired">("all");
@@ -401,6 +504,9 @@ export default function DashboardClient({ applications, messages, userEmail }: P
         maxWidth: "1100px", margin: "0 auto",
         padding: "48px clamp(20px, 4vw, 48px) 100px",
       }}>
+
+        {/* Current retreat + price editor */}
+        {retreat && <RetreatPriceSection retreat={retreat} />}
 
         {/* View switcher */}
         <div style={{ display: "flex", gap: "10px", marginBottom: "28px" }}>

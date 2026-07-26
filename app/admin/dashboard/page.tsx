@@ -1,8 +1,8 @@
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { Application, ContactMessage } from "@/lib/supabase/types";
+import type { Application, ContactMessage, Retreat } from "@/lib/supabase/types";
 import DashboardClient from "./DashboardClient";
-import { MOCK_APPLICATIONS } from "@/lib/mock-data";
+import { MOCK_APPLICATIONS, MOCK_RETREAT } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 
 const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
@@ -10,6 +10,7 @@ const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC
 export default async function DashboardPage() {
   let applications: Application[] = [];
   let messages: ContactMessage[] = [];
+  let retreat: Retreat | null = null;
   let userEmail = process.env.ADMIN_EMAIL ?? "admin@una.eco";
 
   if (IS_MOCK) {
@@ -19,7 +20,15 @@ export default async function DashboardPage() {
       redirect("/admin/login");
     }
     applications = MOCK_APPLICATIONS;
-    return <DashboardClient applications={applications} messages={messages} userEmail={userEmail} />;
+    retreat = MOCK_RETREAT;
+    return (
+      <DashboardClient
+        applications={applications}
+        messages={messages}
+        retreat={retreat}
+        userEmail={userEmail}
+      />
+    );
   }
 
   const { createClient } = await import("@/lib/supabase/server");
@@ -58,5 +67,26 @@ export default async function DashboardPage() {
     messages = (json.messages as ContactMessage[]) ?? [];
   }
 
-  return <DashboardClient applications={applications} messages={messages} userEmail={userEmail} />;
+  const { createServiceClient } = await import("@/lib/supabase/server");
+  const serviceClient = await createServiceClient();
+  const { data: retreatRows, error: retreatError } = await serviceClient
+    .from("retreats")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .limit(1);
+
+  if (retreatError) {
+    console.error("Dashboard retreat fetch error:", retreatError);
+  } else {
+    retreat = retreatRows?.[0] ?? null;
+  }
+
+  return (
+    <DashboardClient
+      applications={applications}
+      messages={messages}
+      retreat={retreat}
+      userEmail={userEmail}
+    />
+  );
 }
