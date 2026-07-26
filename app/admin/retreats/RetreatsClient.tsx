@@ -293,9 +293,6 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
       <AdminNav
         right={
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
-            <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
-              Volver al dashboard
-            </a>
             <span
               style={{
                 fontFamily: "var(--font-sans)",
@@ -310,9 +307,15 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
             >
               {userEmail}
             </span>
-            <button onClick={handleLogout} className="una-btn-ghost-dark">
-              Sign out
-            </button>
+            <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
+            <div style={{ display: "flex", gap: "10px" }}>
+              <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
+                Volver al dashboard
+              </a>
+              <button onClick={handleLogout} className="una-btn-ghost-dark">
+                Sign out
+              </button>
+            </div>
           </div>
         }
       />

@@ -437,12 +437,15 @@ export default function DashboardClient({ applications, messages, retreat, userE
       <AdminNav
         right={
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
-            <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Gestionar retiros</a>
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--cream)", opacity: 0.7,
-              maxWidth: "45vw", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              maxWidth: "35vw", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>{userEmail}</span>
-            <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
+            <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
+            <div style={{ display: "flex", gap: "10px" }}>
+              <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Gestionar retiros</a>
+              <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
+            </div>
           </div>
         }
       />
