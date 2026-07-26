@@ -59,7 +59,7 @@ export async function PATCH(
   const { id } = await params;
 
   const body = await request.json();
-  const { action, price_usd } = body;
+  const { action, custom_price_usd } = body;
 
   if (action !== "approve" && action !== "reject" && action !== "cancel") {
     return NextResponse.json({ error: "Invalid action." }, { status: 400 });
@@ -68,8 +68,8 @@ export async function PATCH(
   // A custom total price (in USD) an admin can set when approving —
   // e.g. to grant a discount. Left unset, the retreat's default price applies.
   let customPriceCents: number | null = null;
-  if (action === "approve" && price_usd !== undefined && price_usd !== null && price_usd !== "") {
-    const parsed = Number(price_usd);
+  if (action === "approve" && custom_price_usd !== undefined && custom_price_usd !== null && custom_price_usd !== "") {
+    const parsed = Number(custom_price_usd);
     if (!Number.isFinite(parsed) || parsed <= 0) {
       return NextResponse.json({ error: "El precio debe ser un número positivo." }, { status: 400 });
     }

@@ -411,7 +411,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
     try {
       const body: Record<string, unknown> = { action };
       if (action === "approve" && customPrice[id]?.trim()) {
-        body.price_usd = Number(customPrice[id].trim());
+        body.custom_price_usd = Number(customPrice[id].trim());
       }
 
       const res = await fetch(`/api/admin/applications/${id}`, {
@@ -513,6 +513,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
       <AdminNav
         right={
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
+            <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Gestionar retiros</a>
             <span style={{
               fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--cream)", opacity: 0.7,
               maxWidth: "45vw", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
@@ -669,9 +670,17 @@ export default function DashboardClient({ applications, messages, retreat, userE
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", flexShrink: 0 }}>
                       {app.status === "pending" && (
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-                          <div>
+                          <div style={{ textAlign: "right" }}>
+                            {retreat && (
+                              <p style={{
+                                margin: "0 0 6px", fontFamily: "var(--font-sans)",
+                                fontSize: "11px", color: "var(--sage)",
+                              }}>
+                                Precio estándar: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
+                              </p>
+                            )}
                             <label htmlFor={`price-${app.id}`} className="una-input-label" style={{ textAlign: "right" }}>
-                              Precio para esta persona (opcional)
+                              Precio especial (USD)
                             </label>
                             <div style={{
                               display: "flex", alignItems: "center", gap: "6px",
@@ -694,6 +703,12 @@ export default function DashboardClient({ applications, messages, retreat, userE
                                 }}
                               />
                             </div>
+                            <p style={{
+                              margin: "4px 0 0", fontFamily: "var(--font-sans)",
+                              fontSize: "10px", color: "var(--sage)", opacity: 0.8, maxWidth: "160px",
+                            }}>
+                              Déjalo vacío para usar el precio estándar
+                            </p>
                           </div>
                           <div style={{ display: "flex", gap: "10px" }}>
                             <button
