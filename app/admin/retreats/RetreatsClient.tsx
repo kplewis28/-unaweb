@@ -113,11 +113,11 @@ function RetreatForm({
       }}
     >
       <div>
-        <label style={fieldLabel}>Nombre</label>
+        <label style={fieldLabel}>Name</label>
         <input required style={inputStyle} value={values.name} onChange={(e) => set("name", e.target.value)} />
       </div>
       <div>
-        <label style={fieldLabel}>Descripción</label>
+        <label style={fieldLabel}>Description</label>
         <textarea
           rows={3}
           style={{ ...inputStyle, resize: "vertical" }}
@@ -126,12 +126,12 @@ function RetreatForm({
         />
       </div>
       <div>
-        <label style={fieldLabel}>Ubicación</label>
+        <label style={fieldLabel}>Location</label>
         <input style={inputStyle} value={values.location} onChange={(e) => set("location", e.target.value)} />
       </div>
       <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
         <div style={{ flex: 1, minWidth: "160px" }}>
-          <label style={fieldLabel}>Fecha inicio</label>
+          <label style={fieldLabel}>Start date</label>
           <input
             required
             type="date"
@@ -141,7 +141,7 @@ function RetreatForm({
           />
         </div>
         <div style={{ flex: 1, minWidth: "160px" }}>
-          <label style={fieldLabel}>Fecha fin</label>
+          <label style={fieldLabel}>End date</label>
           <input
             required
             type="date"
@@ -153,7 +153,7 @@ function RetreatForm({
       </div>
       <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
         <div style={{ flex: 1, minWidth: "120px" }}>
-          <label style={fieldLabel}>Cupos totales</label>
+          <label style={fieldLabel}>Total spots</label>
           <input
             required
             type="number"
@@ -165,7 +165,7 @@ function RetreatForm({
           />
         </div>
         <div style={{ flex: 1, minWidth: "120px" }}>
-          <label style={fieldLabel}>Precio (USD)</label>
+          <label style={fieldLabel}>Price (USD)</label>
           <input
             required
             type="number"
@@ -177,7 +177,7 @@ function RetreatForm({
           />
         </div>
         <div style={{ flex: 1, minWidth: "100px" }}>
-          <label style={fieldLabel}>Moneda</label>
+          <label style={fieldLabel}>Currency</label>
           <input style={inputStyle} value={values.currency} onChange={(e) => set("currency", e.target.value.toUpperCase())} />
         </div>
       </div>
@@ -192,7 +192,7 @@ function RetreatForm({
         }}
       >
         <input type="checkbox" checked={values.is_open} onChange={(e) => set("is_open", e.target.checked)} />
-        Inscripciones abiertas
+        Registration open
       </label>
 
       {error && (
@@ -201,10 +201,10 @@ function RetreatForm({
 
       <div style={{ display: "flex", gap: "10px" }}>
         <button type="submit" disabled={saving} className="una-btn">
-          {saving ? "Guardando…" : "Guardar"}
+          {saving ? "Saving…" : "Save"}
         </button>
         <button type="button" onClick={onCancel} className="una-btn-ghost">
-          Cancelar
+          Cancel
         </button>
       </div>
     </form>
@@ -262,7 +262,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
       });
       const data = await res.json();
       if (!res.ok) {
-        setFeedback({ type: "error", message: data.error ?? "No se pudo actualizar el estado." });
+        setFeedback({ type: "error", message: data.error ?? "Could not update the status." });
       } else {
         router.refresh();
       }
@@ -272,15 +272,15 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
   }
 
   async function handleDelete(retreat: Retreat) {
-    if (!window.confirm(`¿Eliminar "${retreat.name}"? Esta acción no se puede deshacer.`)) return;
+    if (!window.confirm(`Delete "${retreat.name}"? This action cannot be undone.`)) return;
     setDeletingId(retreat.id);
     try {
       const res = await fetch(`/api/admin/retreats/${retreat.id}`, { method: "DELETE" });
       const data = await res.json();
       if (!res.ok) {
-        setFeedback({ type: "error", message: data.error ?? "No se pudo eliminar el retiro." });
+        setFeedback({ type: "error", message: data.error ?? "Could not delete the retreat." });
       } else {
-        setFeedback({ type: "success", message: `"${retreat.name}" fue eliminado.` });
+        setFeedback({ type: "success", message: `"${retreat.name}" was deleted.` });
         router.refresh();
       }
     } finally {
@@ -310,7 +310,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
             <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
             <div style={{ display: "flex", gap: "10px" }}>
               <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
-                Volver al dashboard
+                Back to dashboard
               </a>
               <button onClick={handleLogout} className="una-btn-ghost-dark">
                 Sign out
@@ -347,7 +347,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
                 color: "var(--olive)",
               }}
             >
-              Retiros
+              Retreats
             </h1>
             <p
               style={{
@@ -368,7 +368,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
             }}
             className="una-btn"
           >
-            {showNewForm ? "Cancelar" : "Nuevo retiro"}
+            {showNewForm ? "Cancel" : "New retreat"}
           </button>
         </div>
 
@@ -391,7 +391,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
             onCancel={() => setShowNewForm(false)}
             onSaved={() => {
               setShowNewForm(false);
-              setFeedback({ type: "success", message: "Retiro creado." });
+              setFeedback({ type: "success", message: "Retreat created." });
               router.refresh();
             }}
           />
@@ -407,7 +407,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
               padding: "80px 0",
             }}
           >
-            No hay retiros todavía.
+            No retreats yet.
           </p>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -423,7 +423,7 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
                     onCancel={() => setEditingId(null)}
                     onSaved={() => {
                       setEditingId(null);
-                      setFeedback({ type: "success", message: "Retiro actualizado." });
+                      setFeedback({ type: "success", message: "Retreat updated." });
                       router.refresh();
                     }}
                   />
@@ -458,15 +458,15 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
                         {retreat.name}
                       </h2>
                       <span className={retreat.is_open ? "badge badge-approved" : "badge badge-rejected"}>
-                        {retreat.is_open ? "Abierto" : "Cerrado"}
+                        {retreat.is_open ? "Open" : "Closed"}
                       </span>
                     </div>
                     <p style={{ margin: "0 0 3px", fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-soft)" }}>
-                      {retreat.start_date} → {retreat.end_date} · {retreat.location || "Sin ubicación"}
+                      {retreat.start_date} → {retreat.end_date} · {retreat.location || "No location"}
                     </p>
                     <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--sage)" }}>
-                      ${(retreat.price_cents / 100).toLocaleString("en-US")} {retreat.currency} · {retreat.total_spots} cupos ·{" "}
-                      {appCount} aplicaci{appCount === 1 ? "ón" : "ones"}
+                      ${(retreat.price_cents / 100).toLocaleString("en-US")} {retreat.currency} · {retreat.total_spots} spots ·{" "}
+                      {appCount} application{appCount === 1 ? "" : "s"}
                     </p>
                   </div>
 
@@ -478,18 +478,18 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
                       }}
                       className="una-btn-ghost"
                     >
-                      Editar
+                      Edit
                     </button>
                     <button
                       disabled={togglingId === retreat.id}
                       onClick={() => handleToggleOpen(retreat)}
                       className="una-btn-ghost"
                     >
-                      {togglingId === retreat.id ? "…" : retreat.is_open ? "Cerrar inscripciones" : "Abrir inscripciones"}
+                      {togglingId === retreat.id ? "…" : retreat.is_open ? "Close registration" : "Open registration"}
                     </button>
                     {appCount === 0 && (
                       <button disabled={deletingId === retreat.id} onClick={() => handleDelete(retreat)} className="una-btn-danger">
-                        {deletingId === retreat.id ? "…" : "Eliminar"}
+                        {deletingId === retreat.id ? "…" : "Delete"}
                       </button>
                     )}
                   </div>

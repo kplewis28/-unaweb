@@ -36,7 +36,7 @@ async function sendApprovalAndRespond(
   const emailResult = await sendApprovalEmail({
     toName: application.name,
     toEmail: application.email,
-    retreatName: application.retreat?.name ?? "el retiro",
+    retreatName: application.retreat?.name ?? "the retreat",
     accessCode,
     expiresAt,
     paymentUrl,
@@ -71,7 +71,7 @@ export async function PATCH(
   if (action === "approve" && custom_price_usd !== undefined && custom_price_usd !== null && custom_price_usd !== "") {
     const parsed = Number(custom_price_usd);
     if (!Number.isFinite(parsed) || parsed <= 0) {
-      return NextResponse.json({ error: "El precio debe ser un número positivo." }, { status: 400 });
+      return NextResponse.json({ error: "Price must be a positive number." }, { status: 400 });
     }
     customPriceCents = Math.round(parsed * 100);
   }
@@ -234,7 +234,7 @@ export async function PATCH(
       // which would make the confirmation email lie about what gets charged.
       console.error("[PATCH /api/admin/applications] custom_price_cents column missing:", updateError);
       return NextResponse.json(
-        { error: "No se puede aplicar un precio personalizado: falta ejecutar la migración de base de datos (custom_price_cents)." },
+        { error: "Cannot apply a custom price: the database migration (custom_price_cents) hasn't been run yet." },
         { status: 500 }
       );
     }

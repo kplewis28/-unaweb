@@ -73,25 +73,25 @@ export async function POST(request: NextRequest) {
   const { name, description, location, start_date, end_date, total_spots, price_usd, currency, is_open } = body;
 
   if (typeof name !== "string" || !name.trim()) {
-    return NextResponse.json({ error: "El nombre del retiro es obligatorio." }, { status: 400 });
+    return NextResponse.json({ error: "The retreat name is required." }, { status: 400 });
   }
   if (!start_date || !end_date) {
-    return NextResponse.json({ error: "Las fechas de inicio y fin son obligatorias." }, { status: 400 });
+    return NextResponse.json({ error: "Start and end dates are required." }, { status: 400 });
   }
 
   const priceUsdNum = Number(price_usd);
   if (!Number.isFinite(priceUsdNum) || priceUsdNum <= 0) {
-    return NextResponse.json({ error: "El precio debe ser un número positivo." }, { status: 400 });
+    return NextResponse.json({ error: "Price must be a positive number." }, { status: 400 });
   }
 
   const spotsNum = Number(total_spots);
   if (!Number.isFinite(spotsNum) || spotsNum <= 0) {
-    return NextResponse.json({ error: "Los cupos deben ser un número positivo." }, { status: 400 });
+    return NextResponse.json({ error: "Total spots must be a positive number." }, { status: 400 });
   }
 
   const slug = slugify(name);
   if (!slug) {
-    return NextResponse.json({ error: "No se pudo generar un slug a partir del nombre." }, { status: 400 });
+    return NextResponse.json({ error: "Could not generate a slug from the name." }, { status: 400 });
   }
 
   const newRetreat = {
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
   if (error) {
     console.error("[POST /api/admin/retreats]", error);
     if (error.code === "23505") {
-      return NextResponse.json({ error: "Ya existe un retiro con un nombre/slug muy similar." }, { status: 409 });
+      return NextResponse.json({ error: "A retreat with a very similar name/slug already exists." }, { status: 409 });
     }
     return NextResponse.json({ error: "Failed to create retreat." }, { status: 500 });
   }

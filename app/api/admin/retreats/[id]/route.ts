@@ -38,7 +38,7 @@ export async function PATCH(
 
   if (name !== undefined) {
     if (typeof name !== "string" || !name.trim()) {
-      return NextResponse.json({ error: "El nombre no puede estar vacío." }, { status: 400 });
+      return NextResponse.json({ error: "Name cannot be empty." }, { status: 400 });
     }
     updates.name = name.trim();
   }
@@ -49,7 +49,7 @@ export async function PATCH(
   if (total_spots !== undefined) {
     const spotsNum = Number(total_spots);
     if (!Number.isFinite(spotsNum) || spotsNum <= 0) {
-      return NextResponse.json({ error: "Los cupos deben ser un número positivo." }, { status: 400 });
+      return NextResponse.json({ error: "Total spots must be a positive number." }, { status: 400 });
     }
     updates.total_spots = Math.round(spotsNum);
   }
@@ -103,7 +103,7 @@ export async function DELETE(
   }
 
   if (IS_MOCK) {
-    return NextResponse.json({ error: "No se puede eliminar el retiro de ejemplo en modo mock." }, { status: 400 });
+    return NextResponse.json({ error: "Cannot delete the sample retreat in mock mode." }, { status: 400 });
   }
 
   const { createServiceClient } = await import("@/lib/supabase/server");
@@ -121,7 +121,7 @@ export async function DELETE(
 
   if (count && count > 0) {
     return NextResponse.json(
-      { error: `No se puede eliminar: este retiro tiene ${count} aplicación(es) asociada(s).` },
+      { error: `Cannot delete: this retreat has ${count} associated application(s).` },
       { status: 409 }
     );
   }

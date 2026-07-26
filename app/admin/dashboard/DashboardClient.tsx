@@ -271,7 +271,7 @@ function RetreatBanner({ retreat }: { retreat: Retreat }) {
         <span style={{
           fontSize: "9px", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--sage)",
         }}>
-          Retiro actual
+          Current retreat
         </span>
         <span style={{ fontFamily: "var(--font-serif)", fontSize: "15px", color: "var(--olive)" }}>
           {retreat.name}
@@ -324,7 +324,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
         if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
           setResults((prev) => ({
             ...prev,
-            [id]: { applicationId: id, type: "error", message: "Ingresa un precio válido en dólares." },
+            [id]: { applicationId: id, type: "error", message: "Enter a valid price in dollars." },
           }));
           return;
         }
@@ -443,7 +443,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
             }}>{userEmail}</span>
             <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
             <div style={{ display: "flex", gap: "10px" }}>
-              <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Gestionar retiros</a>
+              <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Manage retreats</a>
               <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
             </div>
           </div>
@@ -612,11 +612,11 @@ export default function DashboardClient({ applications, messages, retreat, userE
                                 margin: "0 0 6px", fontFamily: "var(--font-sans)",
                                 fontSize: "11px", color: "var(--sage)",
                               }}>
-                                Precio estándar: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
+                                Standard price: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
                               </p>
                             )}
                             <label htmlFor={`price-${app.id}`} className="una-input-label" style={{ textAlign: "right" }}>
-                              Precio especial (USD)
+                              Special price (USD)
                             </label>
                             <div style={{
                               display: "flex", alignItems: "center", gap: "6px",
@@ -643,7 +643,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
                               margin: "4px 0 0", fontFamily: "var(--font-sans)",
                               fontSize: "10px", color: "var(--sage)", opacity: 0.8, maxWidth: "160px",
                             }}>
-                              Déjalo vacío para usar el precio estándar
+                              Leave it empty to use the standard price
                             </p>
                           </div>
                           <div style={{ display: "flex", gap: "10px" }}>
@@ -692,7 +692,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
                               margin: "4px 0 0", fontFamily: "var(--font-sans)",
                               fontSize: "11px", color: "var(--olive)",
                             }}>
-                              Precio acordado: ${(app.custom_price_cents / 100).toFixed(2)}
+                              Agreed price: ${(app.custom_price_cents / 100).toFixed(2)}
                             </p>
                           )}
                           {!app.access_code_email_sent && (
