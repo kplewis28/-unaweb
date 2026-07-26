@@ -43,6 +43,18 @@ function renderLocationHtml(location: string): string {
   return country ? `${main}, <em>${country}</em>` : main;
 }
 
+// A short "Sierra Nevada · Colombia" style label for the compact eyebrow
+// lines (hero, registration modal) — drops a "de Santa Marta"-style
+// qualifier from the main segment so it stays a short one-line label.
+function shortLocationLabel(location: string): string {
+  const escaped = escapeHtml(location);
+  const lastComma = escaped.lastIndexOf(",");
+  const main = lastComma === -1 ? escaped : escaped.slice(0, lastComma).trim();
+  const country = lastComma === -1 ? "" : escaped.slice(lastComma + 1).trim();
+  const shortMain = main.split(/\s+de\s+/i)[0].trim();
+  return country ? `${shortMain} · ${country}` : shortMain;
+}
+
 function replaceMarker(html: string, key: string, value: string): string {
   const re = new RegExp(`<!--RETREAT:${key}-->[\\s\\S]*?<!--/RETREAT:${key}-->`, "g");
   return html.replace(re, value);
@@ -77,9 +89,12 @@ export async function GET(request: NextRequest) {
       const descText = retreat.description?.trim()
         ? escapeHtml(retreat.description)
         : "Join us for our next gathering.";
+      const eyebrowText = retreat.location
+        ? `${shortLocationLabel(retreat.location)} · ${dateRange}`
+        : dateRange;
 
-      html = replaceMarker(html, "HERO_DATE", dateRange);
-      html = replaceMarker(html, "MODAL_DATE", dateRange);
+      html = replaceMarker(html, "HERO_DATE", eyebrowText);
+      html = replaceMarker(html, "MODAL_DATE", eyebrowText);
       html = replaceMarker(html, "LOCATION", locationHtml);
       html = replaceMarker(html, "DATE", dateRange);
       html = replaceMarker(html, "DESC", descText);
