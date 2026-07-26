@@ -36,9 +36,13 @@ export async function sendApprovalEmail(
   const firstName = toName.split(" ")[0];
 
   const groupNote =
-    numAttendees && numAttendees > 1 && totalPrice !== undefined
+    totalPrice !== undefined
       ? `<p style="margin:16px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#2a2a2a;line-height:1.55;">
-           Your registration is for <strong>${numAttendees} people</strong>, the total amount is
+           ${
+             numAttendees && numAttendees > 1
+               ? `Your registration is for <strong>${numAttendees} people</strong>, the total amount is`
+               : `The total amount for your spot is`
+           }
            <strong>$${totalPrice.toFixed(2)} ${currency ?? "USD"}</strong>.
          </p>`
       : "";

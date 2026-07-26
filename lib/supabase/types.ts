@@ -37,6 +37,7 @@ export interface Application {
   access_code: string | null;
   access_code_expires_at: string | null;
   access_code_email_sent: boolean;
+  custom_price_cents: number | null;
   notes: string | null;
   created_at: string;
   updated_at: string;

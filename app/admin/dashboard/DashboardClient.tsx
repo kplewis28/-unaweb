@@ -372,6 +372,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, ActionResult>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [customPrice, setCustomPrice] = useState<Record<string, string>>({});
 
   function toggleExpand(id: string) {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -392,12 +393,31 @@ export default function DashboardClient({ applications, messages, retreat, userE
   }
 
   async function handleAction(id: string, action: "approve" | "reject" | "cancel") {
+    if (action === "approve") {
+      const priceStr = customPrice[id]?.trim();
+      if (priceStr) {
+        const priceUsd = Number(priceStr);
+        if (!Number.isFinite(priceUsd) || priceUsd <= 0) {
+          setResults((prev) => ({
+            ...prev,
+            [id]: { applicationId: id, type: "error", message: "Ingresa un precio válido en dólares." },
+          }));
+          return;
+        }
+      }
+    }
+
     setLoadingId(id);
     try {
+      const body: Record<string, unknown> = { action };
+      if (action === "approve" && customPrice[id]?.trim()) {
+        body.price_usd = Number(customPrice[id].trim());
+      }
+
       const res = await fetch(`/api/admin/applications/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify(body),
       });
 
       const data = await res.json();
@@ -408,13 +428,15 @@ export default function DashboardClient({ applications, messages, retreat, userE
           [id]: { applicationId: id, type: "error", message: data.error ?? "Unexpected error" },
         }));
       } else if (action === "approve") {
+        const priceNote =
+          typeof data.totalPriceUsd === "number" ? ` · $${data.totalPriceUsd.toFixed(2)}` : "";
         if (data.emailSent === false) {
           setResults((prev) => ({
             ...prev,
             [id]: {
               applicationId: id,
               type: "email-failed",
-              message: `Code generated for ${data.name}, but the email could not be sent. Code: ${data.accessCode}`,
+              message: `Code generated for ${data.name}${priceNote}, but the email could not be sent. Code: ${data.accessCode}`,
               code: data.accessCode,
             },
           }));
@@ -424,7 +446,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
             [id]: {
               applicationId: id,
               type: "success",
-              message: `Code generated and email sent to ${data.name}`,
+              message: `Code generated and email sent to ${data.name}${priceNote}`,
             },
           }));
         }
@@ -646,22 +668,50 @@ export default function DashboardClient({ applications, messages, retreat, userE
                     {/* Right: actions or code */}
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", flexShrink: 0 }}>
                       {app.status === "pending" && (
-                        <div style={{ display: "flex", gap: "10px" }}>
-                          <button
-                            disabled={isLoading}
-                            onClick={() => handleAction(app.id, "approve")}
-                            className="una-btn-ghost"
-                            style={{ color: "var(--success)", borderColor: "rgba(58,107,58,0.35)" }}
-                          >
-                            {isLoading ? "…" : "Approve"}
-                          </button>
-                          <button
-                            disabled={isLoading}
-                            onClick={() => handleAction(app.id, "reject")}
-                            className="una-btn-danger"
-                          >
-                            {isLoading ? "…" : "Reject"}
-                          </button>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
+                          <div>
+                            <label htmlFor={`price-${app.id}`} className="una-input-label" style={{ textAlign: "right" }}>
+                              Precio para esta persona (opcional)
+                            </label>
+                            <div style={{
+                              display: "flex", alignItems: "center", gap: "6px",
+                              background: "var(--cream-warm)", border: "1px solid var(--sage-muted)",
+                              borderRadius: "8px", padding: "7px 10px", width: "130px",
+                            }}>
+                              <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--sage)" }}>$</span>
+                              <input
+                                id={`price-${app.id}`}
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                placeholder={retreat ? String(retreat.price_cents / 100) : ""}
+                                value={customPrice[app.id] ?? ""}
+                                onChange={(e) => setCustomPrice((prev) => ({ ...prev, [app.id]: e.target.value }))}
+                                style={{
+                                  flex: 1, minWidth: 0, fontFamily: "var(--font-sans)", fontSize: "12px",
+                                  color: "var(--ink-soft)", background: "transparent", border: "none",
+                                  padding: 0, outline: "none",
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", gap: "10px" }}>
+                            <button
+                              disabled={isLoading}
+                              onClick={() => handleAction(app.id, "approve")}
+                              className="una-btn-ghost"
+                              style={{ color: "var(--success)", borderColor: "rgba(58,107,58,0.35)" }}
+                            >
+                              {isLoading ? "…" : "Approve"}
+                            </button>
+                            <button
+                              disabled={isLoading}
+                              onClick={() => handleAction(app.id, "reject")}
+                              className="una-btn-danger"
+                            >
+                              {isLoading ? "…" : "Reject"}
+                            </button>
+                          </div>
                         </div>
                       )}
 
@@ -684,6 +734,14 @@ export default function DashboardClient({ applications, messages, retreat, userE
                               fontSize: "10px", color: "var(--sage)", opacity: 0.7,
                             }}>
                               Expires {expiresAt}
+                            </p>
+                          )}
+                          {app.custom_price_cents != null && (
+                            <p style={{
+                              margin: "4px 0 0", fontFamily: "var(--font-sans)",
+                              fontSize: "11px", color: "var(--olive)",
+                            }}>
+                              Precio acordado: ${(app.custom_price_cents / 100).toFixed(2)}
                             </p>
                           )}
                           {!app.access_code_email_sent && (

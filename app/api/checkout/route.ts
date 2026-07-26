@@ -51,8 +51,12 @@ export async function POST(request: NextRequest) {
     const numAttendees = Math.max(1, application.num_attendees ?? 1);
     // retreat.price_cents is in cents; the payment adapter expects a major
     // currency unit (it multiplies by 100 itself before sending to Stripe).
-    const unitPrice = (retreat?.price_cents ?? 0) / 100;
-    const totalPrice = unitPrice * numAttendees;
+    // A per-application custom_price_cents (set by an admin at approval
+    // time, e.g. for a discount) overrides the retreat's default price.
+    const totalPrice =
+      application.custom_price_cents != null
+        ? application.custom_price_cents / 100
+        : ((retreat?.price_cents ?? 0) / 100) * numAttendees;
 
     const adapter = getPaymentAdapter();
     const result = await adapter.createCheckout({

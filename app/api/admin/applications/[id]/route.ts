@@ -16,12 +16,22 @@ function generateAccessCode(): string {
   return `${segment()}-${segment()}`;
 }
 
-async function sendApprovalAndRespond(application: Application, accessCode: string, expiresAt: Date) {
+async function sendApprovalAndRespond(
+  application: Application,
+  accessCode: string,
+  expiresAt: Date,
+  // Total charge set by an admin at approval time (e.g. for a discount),
+  // in cents. Overrides the retreat's default price entirely when present.
+  overrideTotalCents: number | null
+) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco";
   const paymentUrl = `${baseUrl}/pagar?code=${accessCode}`;
 
   const numAttendees = Math.max(1, application.num_attendees ?? 1);
-  const unitPrice = (application.retreat?.price_cents ?? 0) / 100;
+  const totalPrice =
+    overrideTotalCents != null
+      ? overrideTotalCents / 100
+      : ((application.retreat?.price_cents ?? 0) / 100) * numAttendees;
 
   const emailResult = await sendApprovalEmail({
     toName: application.name,
@@ -31,7 +41,7 @@ async function sendApprovalAndRespond(application: Application, accessCode: stri
     expiresAt,
     paymentUrl,
     numAttendees,
-    totalPrice: unitPrice * numAttendees,
+    totalPrice,
     currency: application.retreat?.currency,
   });
 
@@ -39,7 +49,7 @@ async function sendApprovalAndRespond(application: Application, accessCode: stri
     console.error("[send-approval-email] failed:", emailResult.error);
   }
 
-  return emailResult;
+  return { emailResult, totalPrice };
 }
 
 export async function PATCH(
@@ -49,10 +59,21 @@ export async function PATCH(
   const { id } = await params;
 
   const body = await request.json();
-  const { action } = body;
+  const { action, price_usd } = body;
 
   if (action !== "approve" && action !== "reject" && action !== "cancel") {
     return NextResponse.json({ error: "Invalid action." }, { status: 400 });
+  }
+
+  // A custom total price (in USD) an admin can set when approving —
+  // e.g. to grant a discount. Left unset, the retreat's default price applies.
+  let customPriceCents: number | null = null;
+  if (action === "approve" && price_usd !== undefined && price_usd !== null && price_usd !== "") {
+    const parsed = Number(price_usd);
+    if (!Number.isFinite(parsed) || parsed <= 0) {
+      return NextResponse.json({ error: "El precio debe ser un número positivo." }, { status: 400 });
+    }
+    customPriceCents = Math.round(parsed * 100);
   }
 
   if (IS_MOCK) {
@@ -94,8 +115,14 @@ export async function PATCH(
     application.access_code = accessCode;
     application.access_code_expires_at = expiresAt.toISOString();
     application.updated_at = new Date().toISOString();
+    application.custom_price_cents = customPriceCents;
 
-    const emailResult = await sendApprovalAndRespond(application, accessCode, expiresAt);
+    const { emailResult, totalPrice } = await sendApprovalAndRespond(
+      application,
+      accessCode,
+      expiresAt,
+      customPriceCents
+    );
     application.access_code_email_sent = emailResult.success;
 
     return NextResponse.json({
@@ -103,6 +130,7 @@ export async function PATCH(
       name: application.name,
       accessCode,
       emailSent: emailResult.success,
+      totalPriceUsd: totalPrice,
     });
   }
 
@@ -189,15 +217,31 @@ export async function PATCH(
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 7);
 
-  const { error: updateError } = await supabase
-    .from("applications")
-    .update({
-      status: "approved",
-      access_code: accessCode,
-      access_code_expires_at: expiresAt.toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id);
+  const updatePayload: Record<string, unknown> = {
+    status: "approved",
+    access_code: accessCode,
+    access_code_expires_at: expiresAt.toISOString(),
+    updated_at: new Date().toISOString(),
+    custom_price_cents: customPriceCents,
+  };
+
+  let { error: updateError } = await supabase.from("applications").update(updatePayload).eq("id", id);
+
+  if (updateError?.code === "PGRST204" && "custom_price_cents" in updatePayload) {
+    if (customPriceCents !== null) {
+      // A discount was requested but the column doesn't exist yet — fail
+      // loudly rather than silently approving at the full retreat price,
+      // which would make the confirmation email lie about what gets charged.
+      console.error("[PATCH /api/admin/applications] custom_price_cents column missing:", updateError);
+      return NextResponse.json(
+        { error: "No se puede aplicar un precio personalizado: falta ejecutar la migración de base de datos (custom_price_cents)." },
+        { status: 500 }
+      );
+    }
+    // No discount requested, so the missing column changes nothing — retry without it.
+    delete updatePayload.custom_price_cents;
+    ({ error: updateError } = await supabase.from("applications").update(updatePayload).eq("id", id));
+  }
 
   if (updateError) {
     console.error("[PATCH /api/admin/applications] approve error:", updateError);
@@ -205,7 +249,12 @@ export async function PATCH(
   }
 
   // Send approval email (non-blocking — failure does NOT revert approval)
-  const emailResult = await sendApprovalAndRespond(application, accessCode, expiresAt);
+  const { emailResult, totalPrice } = await sendApprovalAndRespond(
+    application,
+    accessCode,
+    expiresAt,
+    customPriceCents
+  );
 
   if (emailResult.success) {
     await supabase
@@ -219,5 +268,6 @@ export async function PATCH(
     name: application.name,
     accessCode,
     emailSent: emailResult.success,
+    totalPriceUsd: totalPrice,
   });
 }
