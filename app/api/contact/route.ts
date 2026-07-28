@@ -1,8 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
+import { emailSchema, nameSchema, messageSchema, firstZodError } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const CONTACT_NOTIFICATION_EMAIL = "unafest@gmail.com";
+
+const contactSchema = z.object({
+  name: nameSchema,
+  email: emailSchema,
+  interest: z.string().trim().max(300).optional().nullable(),
+  message: messageSchema,
+});
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
 async function notifyContactMessage(params: {
   name: string;
@@ -11,6 +29,11 @@ async function notifyContactMessage(params: {
   message?: string | null;
 }): Promise<boolean> {
   try {
+    const name = escapeHtml(params.name);
+    const email = escapeHtml(params.email);
+    const interest = params.interest ? escapeHtml(params.interest) : null;
+    const message = params.message ? escapeHtml(params.message) : null;
+
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
@@ -18,10 +41,10 @@ async function notifyContactMessage(params: {
       replyTo: params.email,
       subject: "Nuevo mensaje de contacto - una.eco",
       html: `
-        <p><strong>Name:</strong> ${params.name}</p>
-        <p><strong>Email:</strong> ${params.email}</p>
-        ${params.interest ? `<p><strong>Writing about:</strong> ${params.interest}</p>` : ""}
-        ${params.message ? `<p><strong>Message:</strong><br/>${params.message}</p>` : ""}
+        <p><strong>Name:</strong> ${name}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        ${interest ? `<p><strong>Writing about:</strong> ${interest}</p>` : ""}
+        ${message ? `<p><strong>Message:</strong><br/>${message}</p>` : ""}
       `,
     });
     if (error) {
@@ -38,12 +61,19 @@ async function notifyContactMessage(params: {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, interest, message } = body;
-
-    if (!name?.trim() || !email?.trim()) {
-      return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
+    const rateLimit = checkRateLimit(request, "contact", { limit: 5, windowSeconds: 60 * 60 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many messages sent. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+      );
     }
+
+    const parsed = contactSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstZodError(parsed.error) }, { status: 400 });
+    }
+    const { name, email, interest, message } = parsed.data;
 
     // Save to Supabase and notify by email independently — a failure in one
     // (e.g. the contact_messages table not existing yet) should not stop

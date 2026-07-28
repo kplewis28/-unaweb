@@ -1,10 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendPaymentReminderEmail } from "@/lib/email/send-payment-reminder-email";
+import { emailSchema, nameSchema, numAttendeesSchema, firstZodError } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+const applicationSchema = z
+  .object({
+    retreat_id: z.string().trim().max(100).optional(),
+    retreat_slug: z.string().trim().max(100).optional(),
+    name: nameSchema,
+    email: emailSchema,
+    country: z.string().trim().min(1, "Country of residence is required.").max(200),
+    profession: z.string().trim().max(200).optional().nullable(),
+    how_heard: z.string().trim().max(50).optional().nullable(),
+    social_media: z
+      .string()
+      .trim()
+      .min(1, "LinkedIn / Website is required.")
+      .max(300)
+      .regex(/^https?:\/\/.+/i, "Please enter a valid LinkedIn / Website URL."),
+    num_attendees: numAttendeesSchema.optional().default(1),
+    phone: z.string().trim().min(1, "Mobile / WhatsApp is required.").max(50),
+    q_draw: z.string().trim().min(1, "This field is required.").max(2000),
+    q_work_intersection: z.string().trim().min(1, "This field is required.").max(2000),
+    q_responsible_participation: z.string().trim().min(1, "This field is required.").max(2000),
+    org_connection: z.string().trim().max(50).optional().nullable(),
+    travel_availability: z.string().trim().min(1, "Travel availability is required.").max(50),
+    investment_comfort: z.string().trim().min(1, "Investment comfort is required.").max(50),
+  })
+  .refine((data) => data.retreat_id || data.retreat_slug, {
+    message: "Retreat is required.",
+    path: ["retreat_id"],
+  });
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const rateLimit = checkRateLimit(request, "applications", { limit: 3, windowSeconds: 60 * 60 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many applications submitted. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+      );
+    }
+
+    const parsed = applicationSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstZodError(parsed.error) }, { status: 400 });
+    }
     const {
       retreat_id,
       retreat_slug,
@@ -22,33 +65,7 @@ export async function POST(request: NextRequest) {
       org_connection,
       travel_availability,
       investment_comfort,
-    } = body;
-
-    const requiredFields: Record<string, unknown> = {
-      "Full name": name,
-      Email: email,
-      "Country of residence": country,
-      "LinkedIn / Website": social_media,
-      "Mobile / WhatsApp": phone,
-      "What draws you to this gathering": q_draw,
-      "How your work intersects": q_work_intersection,
-      "What responsible participation means to you": q_responsible_participation,
-      "Travel availability": travel_availability,
-      "Investment comfort": investment_comfort,
-    };
-    const missingField = Object.entries(requiredFields).find(([, value]) => !`${value ?? ""}`.trim());
-    if (missingField) {
-      return NextResponse.json({ error: `${missingField[0]} is required.` }, { status: 400 });
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
-    }
-    if (!/^https?:\/\/.+/i.test(social_media.trim())) {
-      return NextResponse.json({ error: "Please enter a valid LinkedIn / Website URL." }, { status: 400 });
-    }
-    if (!retreat_id && !retreat_slug) {
-      return NextResponse.json({ error: "Retreat is required." }, { status: 400 });
-    }
+    } = parsed.data;
 
     // Uses the service client: duplicate detection below needs to reliably
     // read existing applications, which anon-key RLS filters out.
@@ -142,7 +159,7 @@ export async function POST(request: NextRequest) {
       profession: profession?.trim() || null,
       how_heard: how_heard || null,
       social_media: social_media?.trim() || null,
-      num_attendees: Math.max(1, Number(num_attendees) || 1),
+      num_attendees,
       phone: phone?.trim() || null,
       q_draw: q_draw?.trim() || null,
       q_work_intersection: q_work_intersection?.trim() || null,

@@ -19,9 +19,12 @@ export default async function AplicarPage({ params }: Props) {
   const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
 
+  // Explicit column list (never price_cents) — this runs as an anonymous
+  // visitor, and the anon role's SELECT privilege on price_cents is
+  // revoked at the database level, so `select("*")` would fail here.
   const { data: retreat } = await supabase
     .from("retreats")
-    .select("*")
+    .select("id, slug, name, description, location, start_date, end_date, total_spots, currency, is_open, created_at")
     .eq("slug", slug)
     .eq("is_open", true)
     .single();

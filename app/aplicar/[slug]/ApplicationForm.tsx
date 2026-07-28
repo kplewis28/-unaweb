@@ -4,7 +4,9 @@ import { useState } from "react";
 import type { Retreat } from "@/lib/supabase/types";
 
 interface Props {
-  retreat: Retreat;
+  // Deliberately not the full Retreat type: this page fetches as an
+  // anonymous visitor and must never select price_cents.
+  retreat: Pick<Retreat, "id" | "name" | "description" | "start_date">;
 }
 
 export default function ApplicationForm({ retreat }: Props) {

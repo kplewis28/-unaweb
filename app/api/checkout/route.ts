@@ -1,14 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getPaymentAdapter } from "@/lib/payments";
+import { firstZodError } from "@/lib/validation";
+import { checkRateLimit } from "@/lib/rate-limit";
+
+const checkoutSchema = z.object({
+  accessCode: z.string().trim().min(1, "Access code required.").max(20, "Invalid access code."),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const { accessCode } = await request.json();
-
-    if (!accessCode?.trim()) {
-      return NextResponse.json({ error: "Access code required." }, { status: 400 });
+    // This is the endpoint that actually verifies an access code — brute
+    // forcing it is the realistic attack here, so it gets the tightest
+    // limit among the public routes.
+    const rateLimit = checkRateLimit(request, "checkout", { limit: 10, windowSeconds: 60 * 60 });
+    if (!rateLimit.allowed) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429, headers: { "Retry-After": String(rateLimit.retryAfterSeconds) } }
+      );
     }
+
+    const parsed = checkoutSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: firstZodError(parsed.error) }, { status: 400 });
+    }
+    const { accessCode } = parsed.data;
 
     const supabase = await createServiceClient();
 

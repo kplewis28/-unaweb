@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { sendApprovalEmail } from "@/lib/email/send-approval-email";
 import { MOCK_APPLICATIONS } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { priceUsdSchema } from "@/lib/validation";
 import type { Application } from "@/lib/supabase/types";
 
 const IS_MOCK =
@@ -58,6 +59,26 @@ export async function PATCH(
 ) {
   const { id } = await params;
 
+  // Auth is checked before any request-body parsing or business-logic
+  // validation runs — an unauthenticated caller should never learn
+  // anything about expected shapes/fields from this endpoint.
+  if (IS_MOCK) {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get(SESSION_COOKIE);
+    if (!sessionCookie || !verifySessionToken(sessionCookie.value)) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+  } else {
+    const { createClient: createAuthClient } = await import("@/lib/supabase/server");
+    const authClient = await createAuthClient();
+    const {
+      data: { user: authUser },
+    } = await authClient.auth.getUser();
+    if (!authUser) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+  }
+
   const body = await request.json();
   const { action, custom_price_usd } = body;
 
@@ -69,20 +90,14 @@ export async function PATCH(
   // e.g. to grant a discount. Left unset, the retreat's default price applies.
   let customPriceCents: number | null = null;
   if (action === "approve" && custom_price_usd !== undefined && custom_price_usd !== null && custom_price_usd !== "") {
-    const parsed = Number(custom_price_usd);
-    if (!Number.isFinite(parsed) || parsed <= 0) {
-      return NextResponse.json({ error: "Price must be a positive number." }, { status: 400 });
+    const priceResult = priceUsdSchema.safeParse(custom_price_usd);
+    if (!priceResult.success) {
+      return NextResponse.json({ error: priceResult.error.issues[0]?.message ?? "Invalid price." }, { status: 400 });
     }
-    customPriceCents = Math.round(parsed * 100);
+    customPriceCents = Math.round(priceResult.data * 100);
   }
 
   if (IS_MOCK) {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get(SESSION_COOKIE);
-    if (!sessionCookie || !verifySessionToken(sessionCookie.value)) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
     const application = MOCK_APPLICATIONS.find((a) => a.id === id);
     if (!application) {
       return NextResponse.json({ error: "Application not found." }, { status: 404 });
@@ -134,15 +149,10 @@ export async function PATCH(
     });
   }
 
+  // Auth already verified above — just need a request-scoped client for
+  // the queries below (RLS still applies for the authenticated role).
   const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-  }
 
   // Fetch application, then its retreat separately: the applications ->
   // retreats foreign key isn't registered in PostgREST's schema cache, so

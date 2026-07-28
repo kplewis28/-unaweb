@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { cookies } from "next/headers";
 import { MOCK_RETREAT } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { nameSchema, priceUsdSchema, totalSpotsSchema, firstZodError } from "@/lib/validation";
+
+const createRetreatSchema = z.object({
+  name: nameSchema,
+  description: z.string().trim().max(2000).optional().nullable(),
+  location: z.string().trim().max(200).optional().nullable(),
+  start_date: z.string().trim().min(1, "Start date is required.").max(20),
+  end_date: z.string().trim().min(1, "End date is required.").max(20),
+  total_spots: totalSpotsSchema,
+  price_usd: priceUsdSchema,
+  currency: z.string().trim().max(10).optional().nullable(),
+  is_open: z.boolean().optional(),
+});
 
 const IS_MOCK =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -69,25 +83,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { name, description, location, start_date, end_date, total_spots, price_usd, currency, is_open } = body;
-
-  if (typeof name !== "string" || !name.trim()) {
-    return NextResponse.json({ error: "The retreat name is required." }, { status: 400 });
+  const parsed = createRetreatSchema.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: firstZodError(parsed.error) }, { status: 400 });
   }
-  if (!start_date || !end_date) {
-    return NextResponse.json({ error: "Start and end dates are required." }, { status: 400 });
-  }
-
-  const priceUsdNum = Number(price_usd);
-  if (!Number.isFinite(priceUsdNum) || priceUsdNum <= 0) {
-    return NextResponse.json({ error: "Price must be a positive number." }, { status: 400 });
-  }
-
-  const spotsNum = Number(total_spots);
-  if (!Number.isFinite(spotsNum) || spotsNum <= 0) {
-    return NextResponse.json({ error: "Total spots must be a positive number." }, { status: 400 });
-  }
+  const { name, description, location, start_date, end_date, total_spots, price_usd, currency, is_open } = parsed.data;
 
   const slug = slugify(name);
   if (!slug) {
@@ -96,14 +96,14 @@ export async function POST(request: NextRequest) {
 
   const newRetreat = {
     slug,
-    name: name.trim(),
-    description: description?.trim() || null,
-    location: location?.trim() || null,
+    name,
+    description: description || null,
+    location: location || null,
     start_date,
     end_date,
-    total_spots: Math.round(spotsNum),
-    price_cents: Math.round(priceUsdNum * 100),
-    currency: (currency?.trim() || "USD").toUpperCase(),
+    total_spots,
+    price_cents: Math.round(price_usd * 100),
+    currency: (currency || "USD").toUpperCase(),
     is_open: is_open ?? true,
   };
 

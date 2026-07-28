@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { cookies } from "next/headers";
 import { MOCK_RETREAT } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { nameSchema, priceUsdSchema, totalSpotsSchema, firstZodError } from "@/lib/validation";
+
+const patchRetreatSchema = z.object({
+  name: nameSchema.optional(),
+  description: z.string().trim().max(2000).optional().nullable(),
+  location: z.string().trim().max(200).optional().nullable(),
+  start_date: z.string().trim().min(1).max(20).optional(),
+  end_date: z.string().trim().min(1).max(20).optional(),
+  total_spots: totalSpotsSchema.optional(),
+  price_usd: priceUsdSchema.optional(),
+  currency: z.string().trim().max(10).optional().nullable(),
+  is_open: z.boolean().optional(),
+});
 
 const IS_MOCK =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -31,37 +45,23 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const body = await request.json();
-  const { name, description, location, start_date, end_date, total_spots, price_usd, currency, is_open } = body;
+  const parsed = patchRetreatSchema.safeParse(await request.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: firstZodError(parsed.error) }, { status: 400 });
+  }
+  const { name, description, location, start_date, end_date, total_spots, price_usd, currency, is_open } = parsed.data;
 
   const updates: Record<string, unknown> = {};
 
-  if (name !== undefined) {
-    if (typeof name !== "string" || !name.trim()) {
-      return NextResponse.json({ error: "Name cannot be empty." }, { status: 400 });
-    }
-    updates.name = name.trim();
-  }
-  if (description !== undefined) updates.description = description?.trim() || null;
-  if (location !== undefined) updates.location = location?.trim() || null;
+  if (name !== undefined) updates.name = name;
+  if (description !== undefined) updates.description = description || null;
+  if (location !== undefined) updates.location = location || null;
   if (start_date !== undefined) updates.start_date = start_date;
   if (end_date !== undefined) updates.end_date = end_date;
-  if (total_spots !== undefined) {
-    const spotsNum = Number(total_spots);
-    if (!Number.isFinite(spotsNum) || spotsNum <= 0) {
-      return NextResponse.json({ error: "Total spots must be a positive number." }, { status: 400 });
-    }
-    updates.total_spots = Math.round(spotsNum);
-  }
-  if (price_usd !== undefined) {
-    const priceUsdNum = Number(price_usd);
-    if (!Number.isFinite(priceUsdNum) || priceUsdNum <= 0) {
-      return NextResponse.json({ error: "price_usd must be a positive number." }, { status: 400 });
-    }
-    updates.price_cents = Math.round(priceUsdNum * 100);
-  }
-  if (currency !== undefined) updates.currency = (currency?.trim() || "USD").toUpperCase();
-  if (is_open !== undefined) updates.is_open = !!is_open;
+  if (total_spots !== undefined) updates.total_spots = total_spots;
+  if (price_usd !== undefined) updates.price_cents = Math.round(price_usd * 100);
+  if (currency !== undefined) updates.currency = (currency || "USD").toUpperCase();
+  if (is_open !== undefined) updates.is_open = is_open;
 
   if (Object.keys(updates).length === 0) {
     return NextResponse.json({ error: "No fields to update." }, { status: 400 });
