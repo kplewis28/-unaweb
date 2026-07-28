@@ -602,70 +602,8 @@ export default function DashboardClient({ applications, messages, retreat, userE
                       </p>
                     </div>
 
-                    {/* Right: actions or code */}
+                    {/* Right: code, or just the toggle */}
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", flexShrink: 0 }}>
-                      {app.status === "pending" && (
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-                          <div style={{ textAlign: "left" }}>
-                            {retreat && (
-                              <p style={{
-                                margin: "0 0 6px", fontFamily: "var(--font-sans)",
-                                fontSize: "11px", color: "var(--sage)",
-                              }}>
-                                Standard price: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
-                              </p>
-                            )}
-                            <label htmlFor={`price-${app.id}`} className="una-input-label">
-                              Special price (USD)
-                            </label>
-                            <div style={{
-                              display: "flex", alignItems: "center", gap: "6px",
-                              background: "var(--cream-warm)", border: "1px solid var(--sage-muted)",
-                              borderRadius: "8px", padding: "7px 10px", width: "130px",
-                            }}>
-                              <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--sage)" }}>$</span>
-                              <input
-                                id={`price-${app.id}`}
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                placeholder={retreat ? String(retreat.price_cents / 100) : ""}
-                                value={customPrice[app.id] ?? ""}
-                                onChange={(e) => setCustomPrice((prev) => ({ ...prev, [app.id]: e.target.value }))}
-                                style={{
-                                  flex: 1, minWidth: 0, fontFamily: "var(--font-sans)", fontSize: "12px",
-                                  color: "var(--ink-soft)", background: "transparent", border: "none",
-                                  padding: 0, outline: "none",
-                                }}
-                              />
-                            </div>
-                            <p style={{
-                              margin: "4px 0 0", fontFamily: "var(--font-sans)",
-                              fontSize: "10px", color: "var(--sage)", opacity: 0.8, maxWidth: "160px",
-                            }}>
-                              Leave it empty to use the standard price
-                            </p>
-                          </div>
-                          <div style={{ display: "flex", gap: "10px" }}>
-                            <button
-                              disabled={isLoading}
-                              onClick={() => handleAction(app.id, "approve")}
-                              className="una-btn-ghost"
-                              style={{ color: "var(--success)", borderColor: "rgba(58,107,58,0.35)" }}
-                            >
-                              {isLoading ? "…" : "Approve"}
-                            </button>
-                            <button
-                              disabled={isLoading}
-                              onClick={() => handleAction(app.id, "reject")}
-                              className="una-btn-danger"
-                            >
-                              {isLoading ? "…" : "Reject"}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
                       {app.status === "approved" && app.access_code && (
                         <div style={{ textAlign: "right" }}>
                           <p style={{
@@ -732,6 +670,74 @@ export default function DashboardClient({ applications, messages, retreat, userE
                       </button>
                     </div>
                   </div>
+
+                  {/* Review actions — pending applications only */}
+                  {app.status === "pending" && (
+                    <div style={{
+                      borderTop: "1px solid var(--sage-muted)",
+                      background: "var(--cream-warm)",
+                      padding: "18px clamp(20px, 3vw, 32px)",
+                      display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "14px",
+                    }}>
+                      <div style={{ textAlign: "left" }}>
+                        {retreat && (
+                          <p style={{
+                            margin: "0 0 6px", fontFamily: "var(--font-sans)",
+                            fontSize: "11px", color: "var(--sage)",
+                          }}>
+                            Standard price: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
+                          </p>
+                        )}
+                        <label htmlFor={`price-${app.id}`} className="una-input-label">
+                          Special price (USD)
+                        </label>
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: "6px",
+                          background: "var(--cream)", border: "1px solid var(--sage-muted)",
+                          borderRadius: "8px", padding: "7px 10px", width: "130px",
+                        }}>
+                          <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--sage)" }}>$</span>
+                          <input
+                            id={`price-${app.id}`}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder={retreat ? String(retreat.price_cents / 100) : ""}
+                            value={customPrice[app.id] ?? ""}
+                            onChange={(e) => setCustomPrice((prev) => ({ ...prev, [app.id]: e.target.value }))}
+                            style={{
+                              flex: 1, minWidth: 0, fontFamily: "var(--font-sans)", fontSize: "12px",
+                              color: "var(--ink-soft)", background: "transparent", border: "none",
+                              padding: 0, outline: "none",
+                            }}
+                          />
+                        </div>
+                        <p style={{
+                          margin: "4px 0 0", fontFamily: "var(--font-sans)",
+                          fontSize: "10px", color: "var(--sage)", opacity: 0.8, maxWidth: "220px",
+                        }}>
+                          Leave it empty to use the standard price
+                        </p>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        <button
+                          disabled={isLoading}
+                          onClick={() => handleAction(app.id, "approve")}
+                          className="una-btn-success"
+                        >
+                          {isLoading ? "…" : "Approve"}
+                        </button>
+                        <button
+                          disabled={isLoading}
+                          onClick={() => handleAction(app.id, "reject")}
+                          className="una-btn-danger"
+                        >
+                          {isLoading ? "…" : "Reject"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Expanded details */}
                   {isExpanded && (

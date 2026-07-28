@@ -178,6 +178,36 @@ body {
   border-color: var(--error);
 }
 
+/* Solid success button — primary action in review flows (e.g. approving an application) */
+.una-btn-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--success);
+  color: var(--cream);
+  border: none;
+  padding: 10px 22px;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  border-radius: 8px;
+}
+
+.una-btn-success:hover {
+  background: #2f582f;
+}
+
+.una-btn-success:disabled,
+.una-btn-ghost:disabled,
+.una-btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Status badges */
 .badge {
   display: inline-block;
