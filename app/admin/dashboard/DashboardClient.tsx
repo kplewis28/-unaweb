@@ -606,7 +606,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "10px", flexShrink: 0 }}>
                       {app.status === "pending" && (
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "8px" }}>
-                          <div style={{ textAlign: "right" }}>
+                          <div style={{ textAlign: "left" }}>
                             {retreat && (
                               <p style={{
                                 margin: "0 0 6px", fontFamily: "var(--font-sans)",
@@ -615,7 +615,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
                                 Standard price: ${((retreat.price_cents / 100) * Math.max(1, app.num_attendees ?? 1)).toFixed(2)}
                               </p>
                             )}
-                            <label htmlFor={`price-${app.id}`} className="una-input-label" style={{ textAlign: "right" }}>
+                            <label htmlFor={`price-${app.id}`} className="una-input-label">
                               Special price (USD)
                             </label>
                             <div style={{
