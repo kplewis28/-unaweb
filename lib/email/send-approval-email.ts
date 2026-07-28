@@ -166,13 +166,33 @@ export async function sendApprovalEmail(
 </html>
   `.trim();
 
+  const text = `${firstName}, you've been selected.
+
+We're delighted to let you know that your application for ${retreatName} has been reviewed and approved. We would love to have you join us for this gathering.
+${
+  totalPrice !== undefined
+    ? `\n${numAttendees && numAttendees > 1 ? `Your registration is for ${numAttendees} people, the total amount is` : "The total amount for your spot is"} $${totalPrice.toFixed(2)} ${currency ?? "USD"}.\n`
+    : ""
+}
+Your access code: ${accessCode}
+Valid until ${expiresFormatted}
+
+To confirm your spot, enter the code on our payment page:
+${paymentUrl}
+
+If you have any questions, just reply to this email and we'll be happy to help. We're so glad you've chosen to share this space with us.
+
+ÚNA · una.eco`;
+
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
       to: toEmail,
+      replyTo: process.env.EMAIL_REPLY_TO_ADDRESS || undefined,
       subject: `Your spot in ${retreatName} — ÚNA`,
       html,
+      text,
     });
     if (error) {
       console.error("[send-approval-email]", error.message);

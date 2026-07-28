@@ -140,13 +140,29 @@ export async function sendPaymentReminderEmail(
 </html>
   `.trim();
 
+  const text = `${firstName}, your spot is waiting.
+
+You already have an approved spot for ${retreatName}, but we noticed you haven't completed your payment yet. Your access code is still valid for ${hoursRemaining} hour${hoursRemaining === 1 ? "" : "s"}.
+
+Your access code: ${accessCode}
+Valid until ${expiresFormatted}
+
+Complete your payment now to secure your spot before the code expires:
+${paymentUrl}
+
+If you have any questions, just reply to this email and we'll be happy to help.
+
+una.eco`;
+
   try {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error } = await resend.emails.send({
       from: process.env.EMAIL_FROM_ADDRESS!,
       to: toEmail,
+      replyTo: process.env.EMAIL_REPLY_TO_ADDRESS || undefined,
       subject: `Reminder: complete your payment for ${retreatName} — ÚNA`,
       html,
+      text,
     });
     if (error) {
       console.error("[send-payment-reminder-email]", error.message);
