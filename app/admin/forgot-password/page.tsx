@@ -21,11 +21,17 @@ export default function ForgotPasswordPage() {
     try {
       const { createClient } = await import("@/lib/supabase/client");
       const supabase = createClient();
-      await supabase.auth.resetPasswordForEmail(email, {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/admin/reset-password`,
       });
-      // Always show the same confirmation regardless of whether the email
-      // matched an account — this endpoint must not reveal that.
+      // There's exactly one admin account and its email isn't a secret in
+      // this context, so surface real failures (e.g. rate limiting)
+      // instead of always claiming success — that's only worth doing when
+      // hiding account existence actually matters.
+      if (resetError) {
+        setError(resetError.message);
+        return;
+      }
       setSent(true);
     } catch {
       setError("Could not connect. Please try again.");
