@@ -70,7 +70,7 @@ async function fetchActiveRetreat(request: NextRequest): Promise<ActiveRetreat |
   const baseUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL ?? "https://una.eco");
 
   const res = await fetch(`${baseUrl}/api/retreats/active`, {
-    next: { revalidate: 3600 },
+    cache: "no-store",
   });
   if (!res.ok) return null;
   const { retreat } = await res.json();
