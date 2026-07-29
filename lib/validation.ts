@@ -2,6 +2,11 @@ import { z } from "zod";
 
 export const emailSchema = z.string().trim().min(1, "Email is required.").max(254).email("Invalid email address.");
 
+export const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters.")
+  .max(200, "Password is too long.");
+
 export const nameSchema = z.string().trim().min(1, "Name is required.").max(120, "Name is too long.");
 
 export const shortTextSchema = z.string().trim().max(300).optional().nullable();

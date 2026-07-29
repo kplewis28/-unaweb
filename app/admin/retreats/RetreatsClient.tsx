@@ -312,6 +312,9 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
               <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
                 Back to dashboard
               </a>
+              <a href="/admin/account" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
+                Account
+              </a>
               <button onClick={handleLogout} className="una-btn-ghost-dark">
                 Sign out
               </button>

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { MOCK_RETREAT } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { nameSchema, priceUsdSchema, totalSpotsSchema, firstZodError } from "@/lib/validation";
+import { isAdminEmail } from "@/lib/admin-auth";
 
 const createRetreatSchema = z.object({
   name: nameSchema,
@@ -32,7 +33,7 @@ async function isAuthorizedAdmin(): Promise<boolean> {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  return !!user;
+  return !!user && isAdminEmail(user.email);
 }
 
 function slugify(name: string): string {

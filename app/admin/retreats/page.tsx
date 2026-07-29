@@ -4,6 +4,7 @@ import type { Retreat } from "@/lib/supabase/types";
 import RetreatsClient from "./RetreatsClient";
 import { MOCK_RETREAT } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
+import { isAdminEmail } from "@/lib/admin-auth";
 
 const IS_MOCK = !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
 
@@ -29,7 +30,7 @@ export default async function RetreatsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) redirect("/admin/login");
+  if (!user || !isAdminEmail(user.email)) redirect("/admin/login");
 
   userEmail = user?.email ?? "";
 

@@ -4,6 +4,7 @@ import { sendApprovalEmail } from "@/lib/email/send-approval-email";
 import { MOCK_APPLICATIONS } from "@/lib/mock-data";
 import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 import { priceUsdSchema } from "@/lib/validation";
+import { isAdminEmail } from "@/lib/admin-auth";
 import type { Application } from "@/lib/supabase/types";
 
 const IS_MOCK =
@@ -74,7 +75,7 @@ export async function PATCH(
     const {
       data: { user: authUser },
     } = await authClient.auth.getUser();
-    if (!authUser) {
+    if (!authUser || !isAdminEmail(authUser.email)) {
       return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
   }

@@ -116,9 +116,22 @@ export default function AdminLoginPage() {
               </div>
 
               <div style={{ marginBottom: "28px" }}>
-                <label htmlFor="password" className="una-input-label">
-                  Password
-                </label>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
+                  <label htmlFor="password" className="una-input-label" style={{ marginBottom: 0 }}>
+                    Password
+                  </label>
+                  {!IS_MOCK && (
+                    <a
+                      href="/admin/forgot-password"
+                      style={{
+                        fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: "0.04em",
+                        color: "var(--sage)", textDecoration: "underline", textUnderlineOffset: "2px",
+                      }}
+                    >
+                      Forgot password?
+                    </a>
+                  )}
+                </div>
                 <input
                   id="password"
                   type="password"
@@ -128,6 +141,7 @@ export default function AdminLoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="una-input"
                   placeholder="••••••••"
+                  style={{ marginTop: "4px" }}
                 />
               </div>
 

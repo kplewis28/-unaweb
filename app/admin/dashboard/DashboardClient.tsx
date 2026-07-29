@@ -444,6 +444,7 @@ export default function DashboardClient({ applications, messages, retreat, userE
             <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
             <div style={{ display: "flex", gap: "10px" }}>
               <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Manage retreats</a>
+              <a href="/admin/account" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Account</a>
               <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
             </div>
           </div>
