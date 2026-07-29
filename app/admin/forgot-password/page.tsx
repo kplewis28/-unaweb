@@ -21,8 +21,13 @@ export default function ForgotPasswordPage() {
     try {
       const { createClient } = await import("@/lib/supabase/client");
       const supabase = createClient();
+      // Deliberately not window.location.origin: una.eco (apex) 308s to
+      // www.una.eco, so the origin at request time is unpredictable and
+      // Supabase's redirect URL allow-list only has to trust one fixed
+      // value this way instead of every domain variant that resolves here.
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/admin/reset-password`,
+        redirectTo: `${appUrl}/admin/reset-password`,
       });
       // There's exactly one admin account and its email isn't a secret in
       // this context, so surface real failures (e.g. rate limiting)
