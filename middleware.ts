@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminEmail } from "@/lib/admin-auth";
 
 const IS_MOCK =
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -61,9 +62,15 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Belt-and-suspenders: every /admin page and /api/admin route re-checks
+  // isAdminEmail itself, but gating here too means a route that someone
+  // forgets to add that check to still isn't reachable by a stray Supabase
+  // account — public signups are still enabled at the project level.
+  const isAdmin = !!user && isAdminEmail(user.email);
+
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
 
-  if (isAdminRoute && !isPublicAdminPath && !user) {
+  if (isAdminRoute && !isPublicAdminPath && !isAdmin) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
@@ -73,7 +80,7 @@ export async function middleware(request: NextRequest) {
   // session exists — clicking the emailed recovery link establishes a
   // real (if narrowly-scoped) session, and this bounce would otherwise
   // fire before the page's client-side code gets a chance to read it.
-  if (request.nextUrl.pathname === "/admin/login" && user) {
+  if (request.nextUrl.pathname === "/admin/login" && isAdmin) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/dashboard";
     return NextResponse.redirect(url);
