@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import type { Application, ContactMessage, Retreat } from "@/lib/supabase/types";
 import AdminNav from "../AdminNav";
+import AccountMenu from "../AccountMenu";
 
 interface ActionResult {
   applicationId: string;
@@ -302,20 +302,6 @@ export default function DashboardClient({ applications, messages, retreat, userE
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
-  async function handleLogout() {
-    const isMock =
-      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-      process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
-
-    if (isMock) {
-      await fetch("/api/admin/logout", { method: "POST" });
-    } else {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-    }
-    router.push("/admin/login");
-  }
-
   async function handleAction(id: string, action: "approve" | "reject" | "cancel") {
     if (action === "approve") {
       const priceStr = customPrice[id]?.trim();
@@ -436,17 +422,9 @@ export default function DashboardClient({ applications, messages, retreat, userE
       {/* Header */}
       <AdminNav
         right={
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
-            <span style={{
-              fontFamily: "var(--font-sans)", fontSize: "11px", color: "var(--cream)", opacity: 0.7,
-              maxWidth: "35vw", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-            }}>{userEmail}</span>
-            <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
-            <div style={{ display: "flex", gap: "10px" }}>
-              <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Manage retreats</a>
-              <a href="/admin/account" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Account</a>
-              <button onClick={handleLogout} className="una-btn-ghost-dark">Sign out</button>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", rowGap: "8px" }}>
+            <a href="/admin/retreats" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>Manage retreats</a>
+            <AccountMenu userEmail={userEmail} />
           </div>
         }
       />

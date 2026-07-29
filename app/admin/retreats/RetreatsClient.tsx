@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import type { Retreat } from "@/lib/supabase/types";
 import AdminNav from "../AdminNav";
+import AccountMenu from "../AccountMenu";
 
 interface Props {
   retreats: Retreat[];
@@ -219,19 +219,6 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  async function handleLogout() {
-    const isMock =
-      !process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL === "https://mock.supabase.co";
-
-    if (isMock) {
-      await fetch("/api/admin/logout", { method: "POST" });
-    } else {
-      const supabase = createClient();
-      await supabase.auth.signOut();
-    }
-    router.push("/admin/login");
-  }
-
   async function createRetreat(values: RetreatFormValues): Promise<ActionResult> {
     const res = await fetch("/api/admin/retreats", {
       method: "POST",
@@ -292,33 +279,11 @@ export default function RetreatsClient({ retreats, applicationCounts, userEmail 
     <div style={{ minHeight: "100vh", background: "var(--cream-warm)" }}>
       <AdminNav
         right={
-          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap", rowGap: "8px" }}>
-            <span
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "11px",
-                color: "var(--cream)",
-                opacity: 0.7,
-                maxWidth: "35vw",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {userEmail}
-            </span>
-            <span style={{ width: "1px", height: "16px", background: "rgba(171,170,112,0.3)" }} />
-            <div style={{ display: "flex", gap: "10px" }}>
-              <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
-                Back to dashboard
-              </a>
-              <a href="/admin/account" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
-                Account
-              </a>
-              <button onClick={handleLogout} className="una-btn-ghost-dark">
-                Sign out
-              </button>
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap", rowGap: "8px" }}>
+            <a href="/admin/dashboard" className="una-btn-ghost-dark" style={{ textDecoration: "none" }}>
+              Back to dashboard
+            </a>
+            <AccountMenu userEmail={userEmail} />
           </div>
         }
       />
